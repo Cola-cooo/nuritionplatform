@@ -66,7 +66,7 @@ main{padding-top:20px}
 <nav><a href="#canteens">食堂菜单</a><a href="#recommend">智能推荐</a><a href="#nutrition">营养分析</a><a href="#about">使用说明</a></nav>
 <main>
 <div class="notice">营养数据为按常见食堂单份菜品进行的参考估算，并非食堂实际检测值。具体数值会受份量、配方、用油和烹饪方式影响；本平台仅提供日常饮食参考，不用于疾病诊断或治疗。</div>
-<div class="dash-grid"><div class="card goal-card"><div class="small">云大校园饮食助手</div><h3>从真实菜单出发，找到适合自己的搭配</h3><div class="goal-row"><div class="ring" id="goalRing" data-label="45" style="--goal-progress:100%"></div><div><b>45 个菜单条目已建立</b><div class="small">3 个食堂 · 8 个楼层/区域 · 参考营养数据</div></div></div></div><div class="card quick-card"><div class="food-icon">🥗</div><div><b>今日搭配小提示</b><div class="small">优先考虑主食、蛋白质和蔬菜的组合</div><button style="margin-top:9px;padding:7px 12px;font-size:12px" onclick="document.getElementById('recommend').scrollIntoView({behavior:'smooth'})">生成我的搭配</button></div></div></div>
+<div class="dash-grid"><div class="card goal-card"><div class="small">云大校园饮食助手</div><h3>从真实菜单出发，找到适合自己的搭配</h3><div class="goal-row"><div class="ring" id="goalRing" data-label="45" style="--goal-progress:100%"></div><div><b>46 个菜单条目已建立</b><div class="small">3 个食堂 · 9 个楼层/区域 · 参考营养数据</div></div></div></div><div class="card quick-card"><div class="food-icon">🥗</div><div><b>今日搭配小提示</b><div class="small">优先考虑主食、蛋白质和蔬菜的组合</div><button style="margin-top:9px;padding:7px 12px;font-size:12px" onclick="document.getElementById('recommend').scrollIntoView({behavior:'smooth'})">生成我的搭配</button></div></div></div>
 <section id="canteens" class="section"><div class="panel-title"><div><h2>食堂菜品查询</h2><p class="lead">选择食堂和楼层，查看对应菜单及每份参考营养信息。</p></div><span class="estimate">全部菜品营养数据均为参考估算</span></div><div class="choice-grid" id="canteenChoices"></div><label class="field-label">选择楼层 / 区域</label><div class="floor-row" id="floorChoices"></div><div class="searchbar" style="margin-top:14px"><input id="dishSearch" placeholder="搜索菜品名称，例如：瓦香鸡、牛肉面"><button onclick="renderDishList()">搜索</button></div><div class="small" id="dishCount" style="margin-top:10px"></div><div class="dish-grid" id="dishList"></div><div class="dish-photo-note">图片为对应菜品类型的真实食物参考照片，非云大食堂实拍；部分相近菜品会共用同类照片。</div></section>
 <section id="recommend" class="section"><h2>智能饮食搭配</h2><p class="lead">只从你选择的食堂和楼层菜单中推荐，不跨食堂、不跨楼层。</p><div class="card"><div class="field-label">① 想去哪个食堂？</div><div class="floor-row" id="recCanteens"></div><div class="field-label">② 选择楼层</div><div class="floor-row" id="recFloors"></div><div class="field-label">③ 当前状态（可多选）</div><div class="tag-row" id="stateChoices"></div><div class="field-label">④ 饮食目标（可多选）</div><div class="tag-row" id="goalChoices"></div><div class="action-row"><button onclick="generatePlans()">生成三套搭配</button><button class="secondary" onclick="resetPrefs()">恢复均衡饮食</button></div><p class="tiny">不选择状态或目标时，默认按均衡饮食推荐。若当前楼层菜品不足，系统会如实提示，不会借用其他楼层菜品。</p></div><div id="plans" class="result"><div class="empty">选择食堂后，点击「生成三套搭配」。</div></div></section>
 <section id="nutrition" class="section"><h2>本餐营养分析</h2><p class="lead">选择上方任意推荐方案，即可查看总热量、三大营养素及下一餐建议。</p><div id="nutritionAnalysis" class="empty">尚未选择推荐方案。</div></section>
@@ -76,6 +76,8 @@ main{padding-top:20px}
 <div class="modal-backdrop" id="dishModal" onclick="if(event.target===this)closeDishModal()"><div class="modal"><button class="modal-close" onclick="closeDishModal()">关闭</button><div id="dishModalBody"></div></div></div>
 <script>
 const storeMenuData={
+ '南国一豆':{items:['手抓饼','解暑绿豆冰','烧麦','卤蛋','冰镇醇豆饮','手抓饼+培根+牛奶燕麦1','双人特惠：手抓饼+鸡蛋+牛奶燕麦+烧麦','双人粥粥好运：桂香鲜奶米布+牛奶燕麦','养妍红枣+烧麦+蒸鸡蛋','单人爱心早餐：手抓饼+鸡蛋+养妍红枣','牛奶燕麦','桂香鲜奶米布','元气黑芝麻','低卡玉米汁','养妍红枣','焦糖核桃乳'],categories:[{name:'点过',items:[['手抓饼','¥4/份起'],['解暑绿豆冰','¥4/杯'],['烧麦','¥2/个'],['卤蛋','¥2/个'],['冰镇醇豆饮','¥5/杯']]},{name:'会员特惠套餐',items:[['手抓饼+培根+牛奶燕麦1','会员价 ¥8.9/份起','原价 ¥10'],['双人特惠：手抓饼+鸡蛋+牛奶燕麦+烧麦','会员价 ¥9.9/份起','原价 ¥11.9'],['双人粥粥好运：桂香鲜奶米布+牛奶燕麦','价格截图未完整显示'],['养妍红枣+烧麦+蒸鸡蛋','会员价 ¥6.9/份','原价 ¥8'],['单人爱心早餐：手抓饼+鸡蛋+养妍红枣','会员价 ¥7.9/份起','原价 ¥9.9；截图显示今日售罄']]},{name:'营养餐粥',items:[['牛奶燕麦','¥4/杯'],['桂香鲜奶米布','¥6/杯']]},{name:'热豆饮',items:[['元气黑芝麻','¥5/杯'],['低卡玉米汁','¥5/杯'],['养妍红枣','¥5/杯'],['焦糖核桃乳','¥6/杯']]}],source:'根据用户提供的云大楠苑知味堂一楼店微信小程序截图逐项录入。仅录入截图中可辨认的商品和价格；“双人粥粥好运”价格未完整显示，单人爱心早餐截图显示今日售罄。未展示的营养煎饼、营养小食、冰豆饮、特惠餐包等分类暂不补猜。',checked:'2026-11-23'},
+
  '肯德基':{items:['香辣鸡腿堡','单层嫩牛堡美式','汁汁双层嫩牛堡美式','吮指原味鸡','新奥尔良烤鸡腿堡','滋滋yes烤鸡腿堡','老北京鸡肉卷','黄金鸡块（5块）','二块香辣鸡翅','劲爆鸡米花','新奥尔良烤翅','热辣香骨鸡（3块）','薯条','红豆派','葡式蛋挞','四味小食拼盘','炸鸡爆柠套餐','经典圣代','原味冰淇淋花筒','九珍果汁饮料','百事可乐','原叶轻乳茶','黑糖珍珠轻乳茶'],source:'该校楸苑食堂一层肯德基门店线上菜单中核实到的部分单品（23项）；价格及可售状态以门店点餐页为准',url:'https://drivethruindex.com/restaurants/cn/yn/%E6%98%86%E6%98%8E/kfc-KMN300?lang=en',checked:'2026-11-23'},
  '汉堡王':{items:['大嘴安格斯','大皇堡（原味/天椒）','狠霸王牛堡','果木风味鸡腿堡','薯霸王','小不辣鸡条','5拼招牌国王桶','李广杏风味饮'],source:'汉堡王中国官网当前公开菜单中可核实的部分单品；仅代表品牌菜单，不保证云大楠苑门店当日全部供应',url:'https://www.bkchina.cn/product/',checked:'2026-11-23'},
  '曹氏鸭脖':{items:['招牌鸭脖','香辣鸭翅','鲜辣鸭掌','素鸭脖','素海肠','腐竹','兰花干','海带结','藕片','土豆片','贡菜','木耳','鹌鹑蛋','笋尖','金针菇'],source:'蜀湘曹氏鸭脖官网菜单攻略列出的品牌卤味品类；门店具体供应、称重规格以现场为准',url:'https://www.caoshiyabo.com/p/51.html',checked:'2026-11-23'},
@@ -113,6 +115,7 @@ const menuData = [
 ['楸苑','三楼','成都砂锅',580,25,20,70,'汤锅类菜品，实际营养取决于主食、肉类和汤底。','选择瘦肉、豆腐和蔬菜，注意汤底；参考估算'],
 ['楸苑','三楼','轻食',420,25,14,48,'常见包含蔬菜、蛋白质和少量主食，酱汁会改变能量。','酱汁分开放，注意蛋白质份量是否充足；参考估算','dynamic'],
 // 楠苑周边、二楼、三楼
+['楠苑','一楼','南国一豆',0,0,0,0,'这是云大楠苑知味堂一楼店；商品和标价依据用户提供的小程序截图录入，营养值尚未核算。','先选择小程序中实际售卖的单品或完整套餐；套餐不拆分为单品推荐。','store'],
 ['楠苑','周边商家','汉堡王',680,30,35,65,'汉堡类通常含主食、肉类和酱料，套餐差异较大。','优先单点汉堡、选择无糖饮品；参考估算'],
 ['楠苑','二楼','自选菜',620,26,22,76,'按一份主食、荤菜及蔬菜的常见组合估算。','实际选择后用动态估算器调整；参考估算','dynamic'],
 ['楠苑','二楼','牛肉饭',650,30,20,82,'牛肉提供蛋白质，米饭提供碳水，酱汁影响钠和糖。','优先瘦牛肉，酱汁适量并增加蔬菜；参考估算'],
@@ -134,7 +137,7 @@ const menuData = [
 ['梓苑','二楼','冒菜',650,28,32,62,'食材和汤底变化较大，油脂与钠可能偏高。','多选蔬菜、豆制品和瘦肉，少喝汤；参考估算','dynamic'],
 ['梓苑','三楼','菜单点菜',650,28,24,78,'具体菜品和份量未提供，当前仅保留菜单入口，不赋予确定菜品营养值。','请按实际点菜食材和份量使用动态估算器；营养数据待完善','pending'],
 ['梓苑','三楼','牛排',620,42,34,18,'牛排可提供较多蛋白质，脂肪取决于部位、克重和烹饪用油。','优先选择适量瘦肉，搭配蔬菜和主食；参考估算']
-].map((a,i)=>{const storeNames=['堡中霸','肯德基','朱家小馆','马姐牛肉','曹氏鸭脖','汉堡王'];const isStore=storeNames.includes(a[2]);const shop=storeMenuData[a[2]]||null;return {id:i+1,canteen:a[0],floor:a[1],name:a[2],kcal:a[3],p:a[4],f:a[5],c:a[6],feature:isStore?'这是店铺/窗口名称，不是单道菜品；已将菜单核实与营养估算分开。':a[7],advice:isStore?'先从该店实际菜单中选具体单品，再按正常售卖份量估算。':a[8],kind:isStore?'store':(a[9]||'regular'),storeMenu:shop?.items||[],storeCategories:shop?.categories||[],storeSource:shop?.source||'暂未找到能确认属于该校区该楼层该店铺的公开菜单，不能用同名外校/外地商家菜单代替。',storeUrl:shop?.url||'',checked:shop?.checked||'',source:isStore?(shop?.items?.length?'已查到该店线上菜单':'店铺入口·菜单待核实'):(a[9]==='pending'?'待完善':'参考估算')};});
+].map((a,i)=>{const storeNames=['堡中霸','肯德基','朱家小馆','马姐牛肉','曹氏鸭脖','汉堡王','南国一豆'];const isStore=storeNames.includes(a[2]);const shop=storeMenuData[a[2]]||null;return {id:i+1,canteen:a[0],floor:a[1],name:a[2],kcal:a[3],p:a[4],f:a[5],c:a[6],feature:isStore?'这是店铺/窗口名称，不是单道菜品；已将菜单核实与营养估算分开。':a[7],advice:isStore?'先从该店实际菜单中选具体单品，再按正常售卖份量估算。':a[8],kind:isStore?'store':(a[9]||'regular'),storeMenu:shop?.items||[],storeCategories:shop?.categories||[],storeSource:shop?.source||'暂未找到能确认属于该校区该楼层该店铺的公开菜单，不能用同名外校/外地商家菜单代替。',storeUrl:shop?.url||'',checked:shop?.checked||'',source:isStore?(shop?.items?.length?'已查到该店线上菜单':'店铺入口·菜单待核实'):(a[9]==='pending'?'待完善':'参考估算')};});
 
 function dishImage(d){return ''; }
 
@@ -142,7 +145,7 @@ const canteens=['楸苑','楠苑','梓苑'];
 const states=['非常饿','正常饥饿','不太饿','刚运动结束','今天运动量较少'];
 const goals=['正常饮食','减脂控制热量','增肌补充蛋白质','控制油脂摄入','控制糖分摄入','清淡饮食','运动后补充营养'];
 let selectedCanteen='楸苑', selectedFloor='全部楼层', recCanteen='楸苑', recFloor='全部楼层', selectedStates=[], selectedGoals=[], selectedPlan=null, rotation=0, planStore=[];
-const floorMap={'楸苑':['一楼','二楼','三楼'],'楠苑':['周边商家','二楼','三楼'],'梓苑':['一楼','二楼','三楼']};
+const floorMap={'楸苑':['一楼','二楼','三楼'],'楠苑':['周边商家','一楼','二楼','三楼'],'梓苑':['一楼','二楼','三楼']};
 const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function init(){renderCanteens();renderFloors();renderDishList();renderRecCanteens();renderRecFloors();renderTags();}
