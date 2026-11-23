@@ -122,11 +122,20 @@ main{padding-top:20px}
 .pf-card em{font-style:normal;font-size:11px;color:#0a8175;font-weight:700}
 .pf-card.active{border-color:#0a8175;box-shadow:0 6px 16px #0a817522}
 @media(min-width:901px){
- #profilePanel{position:fixed;right:16px;top:132px;width:258px;max-height:calc(100vh - 160px);overflow:auto;margin:0;background:#fff;box-shadow:0 12px 32px #16785f14;z-index:5}
- .pf-cards{grid-template-columns:1fr}
- .pf-card img{height:88px}
+ #profilePanel{display:none!important}
 }
-@media(min-width:901px){main{margin-right:326px}header{max-width:calc(100% - 400px)}}.profile-panel{display:none!important}</style></head><body>
+@media(min-width:901px){main{margin-right:380px}header{max-width:calc(100% - 452px)}.profile-panel{max-height:calc(100vh - 90px);overflow-y:auto;overflow-x:hidden}}@media(max-width:900px){#profilePanel{display:block!important}}<style>
+.pf-side{margin:16px 0 6px}
+.pf-side>b{display:block;font-size:12px;color:#c6ece5;margin-bottom:8px;letter-spacing:.3px}
+.profile-panel .pf-cards{grid-template-columns:repeat(2,1fr);gap:8px}
+.profile-panel .pf-card{background:#ffffff14;border:2px solid #ffffff26;border-radius:11px}
+.profile-panel .pf-card img{height:48px}
+.profile-panel .pf-body{padding:6px 8px 8px}
+.profile-panel .pf-card b{color:#fff;font-size:12px}
+.profile-panel .pf-card span{color:#c9e7df;font-size:10px;line-height:1.3;margin:1px 0 4px}
+.profile-panel .pf-card em{color:#c7f150;font-size:11px}
+.profile-panel .pf-card.active{border-color:#c7f150;box-shadow:0 0 0 2px #c7f15033;background:#ffffff22}
+.profile-panel::-webkit-scrollbar{width:0;height:0}</style></head><body>
 <header><div class="top"><div class="brand">云大营养<span>·</span>NutriWise</div><div class="tag">云南大学校园饮食营养推荐平台</div><button onclick="document.getElementById('recommend').scrollIntoView({behavior:'smooth'})">✦ 智能搭配</button></div><div class="hero"><div><div class="eyebrow">✦ 吃得明白，选得合适</div><h1>今天这顿，<br>怎么吃更合适？</h1><p>查找楸苑、楠苑、梓苑食堂菜品，结合饮食目标生成营养搭配建议。</p><div class="hero-actions"><a href="#canteens">选择食堂</a><a href="#recommend">开始智能推荐</a></div></div><div class="hero-photo"><img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=900&q=85" alt="健康餐食"></div></div></header>
 <nav><a href="#canteens">食堂菜单</a><a href="#recommend">智能推荐</a><a href="#nutrition">营养分析</a><a href="#about">使用说明</a></nav>
 <main>
@@ -137,7 +146,7 @@ main{padding-top:20px}
 <section id="nutrition" class="section"><h2>本餐营养分析</h2><p class="lead">选择上方任意推荐方案，即可查看总热量、三大营养素及下一餐建议。</p><div id="nutritionAnalysis" class="empty">尚未选择推荐方案。</div></section>
 <section id="about" class="section"><h2>数据与使用说明</h2><div class="articles"><article class="card article"><h3>估算口径</h3><p>按常见单份食堂餐食估算；每份热量和三大营养素均标记为参考估算，不代表实际售卖份量的检测结果。</p></article><article class="card article"><h3>动态菜品</h3><p>自选菜、麻辣香锅、轻食及菜单点菜等菜品可进入份量估算器，按食材和份量调整营养值。</p></article><article class="card article"><h3>合理使用</h3><p>推荐结果用于日常饮食参考。过敏、疾病或特殊营养需求，请以专业人员建议为准。</p></article></div></section>
 <div class="footer">云大营养平台｜云南大学校园饮食营养推荐平台</div></main>
-<aside class="profile-panel" aria-label="平台信息"><div class="profile-content"><div class="avatar">🥗</div><h3>云大营养平台</h3><p class="role">校园饮食 · 营养推荐</p><button class="outline-btn" onclick="document.getElementById('recommend').scrollIntoView({behavior:'smooth'})">✦ 开始智能推荐</button><div class="hours"><b>覆盖食堂</b>楸苑 · 楠苑 · 梓苑<br><br><b>数据说明</b>常见份量参考估算<br>非实际检测数据</div><div class="city-card"><div class="small" style="color:#c6ece5">推荐原则</div><div class="city">均衡搭配</div><p>主食 · 蛋白质 · 蔬菜</p></div><div class="streak">菜单完整性 <b>45 / 45</b></div></div></aside>
+<aside class="profile-panel" aria-label="平台信息"><div class="profile-content"><div class="avatar">🥗</div><h3>云大营养平台</h3><p class="role">校园饮食 · 营养推荐</p><button class="outline-btn" onclick="document.getElementById('recommend').scrollIntoView({behavior:'smooth'})">✦ 开始智能推荐</button><div class="pf-side"><b>目标人群</b><div class="pf-cards"></div></div><div class="hours"><b>覆盖食堂</b>楸苑 · 楠苑 · 梓苑<br><br><b>数据说明</b>常见份量参考估算<br>非实际检测数据</div><div class="city-card"><div class="small" style="color:#c6ece5">推荐原则</div><div class="city">均衡搭配</div><p>主食 · 蛋白质 · 蔬菜</p></div><div class="streak">菜单完整性 <b>45 / 45</b></div></div></aside>
 <div class="modal-backdrop" id="dishModal" onclick="if(event.target===this)closeDishModal()"><div class="modal"><button class="modal-close" onclick="closeDishModal()">关闭</button><div id="dishModalBody"></div></div></div>
 <script>
 const storeMenuData={
@@ -557,11 +566,12 @@ const PROFILES={
 let profileKey=(function(){try{return localStorage.getItem('yd_profile')||'normal';}catch(e){return 'normal';}})();
 function dailyTarget(){const p=PROFILES[profileKey]||PROFILES.normal;return p.kcal;}
 function renderProfiles(){
- const box=$('profileCards');if(!box)return;
- box.innerHTML=Object.keys(PROFILES).map(function(k){
+ const boxes=document.querySelectorAll('.pf-cards');if(!boxes.length)return;
+ const html=Object.keys(PROFILES).map(function(k){
   const p=PROFILES[k];
   return '<div class="pf-card'+(k===profileKey?' active':'')+'" onclick="setProfile(\''+k+'\')"><img src="'+p.img+'" alt="'+p.name+'"><div class="pf-body"><b>'+p.name+'</b><span>'+p.desc+'</span><em>'+p.kcal+' kcal/天</em></div></div>';
  }).join('');
+ Array.prototype.forEach.call(boxes,function(b){b.innerHTML=html;});
 }
 function setProfile(k){
  if(!PROFILES[k])return;
