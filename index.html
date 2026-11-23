@@ -124,7 +124,9 @@ main{padding-top:20px}
 @media(min-width:901px){
  #profilePanel{display:none!important}
 }
-@media(min-width:901px){main{margin-right:380px}header{max-width:calc(100% - 452px)}.profile-panel{max-height:calc(100vh - 90px);overflow-y:auto;overflow-x:hidden}}@media(max-width:900px){#profilePanel{display:block!important}}</style>
+@media(min-width:901px){main{margin-right:380px}header{max-width:calc(100% - 452px)}.profile-panel{max-height:calc(100vh - 90px);overflow-y:auto;overflow-x:hidden}}@media(max-width:900px){#profilePanel{display:block!important}.target-groups .pf-head{flex-direction:column;gap:2px}.target-groups .pf-head b{font-size:16px}}
+@media(min-width:561px) and (max-width:900px){#profilePanel .pf-cards{grid-template-columns:repeat(2,1fr)}#profilePanel .pf-card img{height:104px}}
+@media(max-width:560px){#profilePanel .pf-cards{grid-template-columns:1fr}#profilePanel .pf-card img{height:96px}#profilePanel .pf-card{display:grid;grid-template-columns:104px 1fr;align-items:stretch}#profilePanel .pf-card img{height:100%;min-height:82px}#profilePanel .pf-body{display:flex;flex-direction:column;justify-content:center}}</style>
 <style>
 .pf-side{margin:12px 0 8px;background:#fff;border-radius:14px;padding:8px 8px 9px;box-shadow:0 8px 20px #062e261f}
 .pf-side>b{display:block;font-size:13px;color:#17564a;margin:2px 2px 9px;letter-spacing:.3px}
