@@ -234,7 +234,7 @@ function compactShopMenu(d){
  if(cats.length) return cats.map((cat,i)=>{
   const items=cat.items||[],shown=items.slice(0,3),rest=items.slice(3);
   const renderItem=it=>'<li>'+shopThumb(it[0])+'<span>'+esc(it[0])+' · '+esc(it[1])+(it[2]?'（'+esc(it[2])+'）':'')+'</span></li>';
-  return '<h4 style="margin-top:14px">'+esc(cat.name)+' <span class="tiny">（'+items.length+'项）</span></h4><ul class="shop-menu-list">'+shown.map(renderItem).join('')+'</ul>'+(rest.length?'<details class="shop-more"><summary>查看更多（剩余'+rest.length+'项）</summary><ul class="shop-menu-list">'+rest.map(renderItem).join('')+'</ul></details>':'');
+  return '<h4 style="margin-top:14px">'+esc(cat.name)+'</h4><ul class="shop-menu-list">'+shown.map(renderItem).join('')+'</ul>'+(rest.length?'<details class="shop-more"><summary>查看更多（剩余'+rest.length+'项）</summary><ul class="shop-menu-list">'+rest.map(renderItem).join('')+'</ul></details>':'');
  }).join('');
  const items=d.storeMenu||[],shown=items.slice(0,4),rest=items.slice(4);
  const renderName=n=>'<li>'+shopThumb(n)+'<span>'+esc(n)+'</span></li>';
