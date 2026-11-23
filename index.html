@@ -211,7 +211,26 @@ function fitsMeal(d,meal){
  if(meal==='午餐') return !snack;
  return !snack && !/(燕麦|手抓饼|烧麦|早餐|米布)/.test(n);
 }
-function basePool(){return menuData.filter(d=>d.canteen===recCanteen&&(recFloor==='全部楼层'||d.floor===recFloor)&&!['pending','store','dynamic'].includes(d.kind)&&fitsMeal(d,selectedMeal));}
+function nanguoBreakfastPool(){
+ const specs=[
+  ['手抓饼',420,9,20,48,'¥4/份起','面饼提供碳水，煎制用油会影响脂肪。','可搭配鸡蛋或豆饮，作为早餐主食。'],
+  ['烧麦',80,3,3,12,'¥2/个','糯米和面皮提供碳水，馅料提供少量蛋白质。','按食量选择数量，可搭配鸡蛋或豆饮。'],
+  ['卤蛋',75,6,5,1,'¥2/个','鸡蛋提供蛋白质和脂肪。','可与主食搭配，组成更完整的早餐。'],
+  ['牛奶燕麦',180,6,5,28,'¥4/杯','燕麦提供碳水和膳食纤维，牛奶提供部分蛋白质。','适合搭配手抓饼或烧麦。'],
+  ['桂香鲜奶米布',220,5,7,34,'¥6/杯','米制品提供碳水，牛奶提供部分蛋白质。','可搭配鸡蛋等蛋白质食物。'],
+  ['元气黑芝麻',160,5,8,18,'¥5/杯','芝麻饮品含脂肪和一定蛋白质，具体配方会影响营养。','可作为饮品，不建议单独替代早餐。'],
+  ['养妍红枣',130,2,3,23,'¥5/杯','红枣饮品主要提供碳水，甜度影响能量。','留意甜度，可搭配蛋类和主食。'],
+  ['焦糖核桃乳',180,5,10,18,'¥6/杯','核桃乳含一定脂肪，糖和配方会影响能量。','适量饮用，搭配主食更均衡。'],
+  ['手抓饼+培根+牛奶燕麦1',560,15,24,60,'会员价 ¥8.9/份起','包含主食、培根和燕麦饮，是完整套餐。','按一份套餐食用，不拆分搭配。'],
+  ['养妍红枣+烧麦+蒸鸡蛋',350,13,9,48,'会员价 ¥6.9/份','包含饮品、烧麦和蒸蛋，兼有主食与蛋白质。','按完整套餐选择。']
+ ];
+ return specs.map((x,i)=>({id:1001+i,canteen:'楠苑',floor:'一楼',name:x[0],kcal:x[1],p:x[2],f:x[3],c:x[4],price:x[5],feature:x[6],advice:x[7],kind:'storeItem'}));
+}
+function basePool(){
+ const local=menuData.filter(d=>d.canteen===recCanteen&&(recFloor==='全部楼层'||d.floor===recFloor)&&!['pending','store','dynamic'].includes(d.kind)&&fitsMeal(d,selectedMeal));
+ if(recCanteen==='楠苑'&&(recFloor==='全部楼层'||recFloor==='一楼')&&selectedMeal==='早餐') return [...local,...nanguoBreakfastPool()];
+ return local;
+}
 function scoreDish(d,style){let score=Math.random()*1.4;if(style==='balanced'){score+=d.p*.16 - Math.abs(d.kcal-600)*.003 - d.f*.025;}if(style==='protein'){score+=d.p*.42-d.f*.045;}if(style==='light'){score+=-d.kcal*.012-d.f*.09+d.p*.13;}let goalsNow=selectedGoals;if(goalsNow.includes('减脂控制热量'))score+=-d.kcal*.003+d.p*.05;if(goalsNow.includes('增肌补充蛋白质')||goalsNow.includes('运动后补充营养'))score+=d.p*.16;if(goalsNow.includes('控制油脂摄入'))score-=d.f*.12;if(goalsNow.includes('清淡饮食'))score-=d.f*.07;if(goalsNow.includes('控制糖分摄入'))score-=d.c*.025;if(selectedStates.includes('刚运动结束'))score+=d.p*.07+d.c*.015;if(selectedStates.includes('今天运动量较少'))score-=d.kcal*.001;return score;}
 function generatePlans(){
  let pool=basePool();
@@ -221,7 +240,7 @@ function generatePlans(){
  let plan={title:'本次推荐',desc:'按「'+selectedMeal+'」筛选，只推荐一个实际购买选项：一个窗口、一份完整单品，不跨楼层、不拼半份。',items:[chosen],style:'single'};
  planStore=[plan];
  let d=chosen,totals=planTotals(plan);
- $('plans').innerHTML=`<div class="recommend-grid" style="grid-template-columns:minmax(0,1fr)"><div class="plan-card best"><h3>今天可以选这一份</h3><div class="plan-sub">${plan.desc}</div><div class="plan-dish">${dishImage(d)?`<img src="${dishImage(d)}" alt="${esc(d.name)}实物参考图" loading="lazy">`:`<div class="plan-photo-placeholder">暂无图片</div>`}<div><b>${esc(d.name)}</b><small>${d.canteen} · ${d.floor} · 一份正常售卖份量</small></div></div><div class="plan-total">${totals.kcal} <span style="font-size:12px;font-weight:400">kcal（估算）</span></div><div class="macro-row"><div class="macro"><b>${totals.p}g</b><small>蛋白质</small></div><div class="macro"><b>${totals.f}g</b><small>脂肪</small></div><div class="macro"><b>${totals.c}g</b><small>碳水</small></div></div><p class="small">${esc(d.feature)}</p><p class="small"><b>选择提示：</b>${esc(d.advice)}</p><button class="secondary" style="width:100%;margin-top:8px" onclick="showAnalysis(0)">查看这份的营养分析</button></div></div><div class="action-row"><button onclick="generatePlans()">↻ 换一个单品</button><span class="tiny">推荐范围：${selectedMeal} · ${recCanteen} · ${recFloor}。餐次筛选依据菜品类型，实际供餐时段以窗口为准。每次只推荐一份完整单品。</span></div>`;
+ $('plans').innerHTML=`<div class="recommend-grid" style="grid-template-columns:minmax(0,1fr)"><div class="plan-card best"><h3>今天可以选这一份</h3><div class="plan-sub">${plan.desc}</div><div class="plan-dish">${d.kind==='storeItem'?shopThumb(d.name):(dishImage(d)?`<img src="${dishImage(d)}" alt="${esc(d.name)}实物参考图" loading="lazy">`:`<div class="plan-photo-placeholder">暂无图片</div>`)}<div><b>${esc(d.name)}</b><small>${d.canteen} · ${d.floor} · ${d.price||'一份正常售卖份量'}</small></div></div><div class="plan-total">${totals.kcal} <span style="font-size:12px;font-weight:400">kcal（估算）</span></div><div class="macro-row"><div class="macro"><b>${totals.p}g</b><small>蛋白质</small></div><div class="macro"><b>${totals.f}g</b><small>脂肪</small></div><div class="macro"><b>${totals.c}g</b><small>碳水</small></div></div><p class="small">${esc(d.feature)}</p><p class="small"><b>选择提示：</b>${esc(d.advice)}</p><button class="secondary" style="width:100%;margin-top:8px" onclick="showAnalysis(0)">查看这份的营养分析</button></div></div><div class="action-row"><button onclick="generatePlans()">↻ 换一个单品</button><span class="tiny">推荐范围：${selectedMeal} · ${recCanteen} · ${recFloor}。餐次筛选依据菜品类型，实际供餐时段以窗口为准。每次只推荐一份完整单品。</span></div>`;
  showAnalysis(0);
 }
 function planTotals(plan){let scale=1;return {kcal:Math.round(plan.items.reduce((s,d)=>s+d.kcal*scale,0)),p:Math.round(plan.items.reduce((s,d)=>s+d.p*scale,0)),f:Math.round(plan.items.reduce((s,d)=>s+d.f*scale,0)),c:Math.round(plan.items.reduce((s,d)=>s+d.c*scale,0))};}
