@@ -108,14 +108,32 @@ main{padding-top:20px}
 @keyframes bounce{0%,100%{transform:translateY(0)}45%{transform:translateY(-6px)}}
 @keyframes wobble{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
 @keyframes drip{0%{transform:translateY(-3px);opacity:0}30%{opacity:1}100%{transform:translateY(15px);opacity:0}}
-</style></head><body>
+</style><style>
+.target-groups{background:#f6fbf7;border:1px solid #e2efe6;border-radius:14px;padding:12px;margin:0 0 14px}
+.pf-head{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.pf-head b{font-size:15px;color:#17564a}
+.pf-head span{font-size:11px;color:#8ba09b}
+.pf-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.pf-card{background:#fff;border:2px solid #e6f0e8;border-radius:12px;overflow:hidden;cursor:pointer;transition:.18s}
+.pf-card img{width:100%;height:74px;object-fit:cover;display:block}
+.pf-body{padding:8px 9px 10px}
+.pf-card b{display:block;font-size:13px;color:#1b4a40}
+.pf-card span{display:block;font-size:11px;color:#7f948e;line-height:1.35;margin:2px 0 5px}
+.pf-card em{font-style:normal;font-size:11px;color:#0a8175;font-weight:700}
+.pf-card.active{border-color:#0a8175;box-shadow:0 6px 16px #0a817522}
+@media(min-width:901px){
+ #profilePanel{position:fixed;right:16px;top:132px;width:258px;max-height:calc(100vh - 160px);overflow:auto;margin:0;background:#fff;box-shadow:0 12px 32px #16785f14;z-index:5}
+ .pf-cards{grid-template-columns:1fr}
+ .pf-card img{height:88px}
+}
+@media(min-width:901px){main{margin-right:326px}header{max-width:calc(100% - 400px)}}.profile-panel{display:none!important}</style></head><body>
 <header><div class="top"><div class="brand">云大营养<span>·</span>NutriWise</div><div class="tag">云南大学校园饮食营养推荐平台</div><button onclick="document.getElementById('recommend').scrollIntoView({behavior:'smooth'})">✦ 智能搭配</button></div><div class="hero"><div><div class="eyebrow">✦ 吃得明白，选得合适</div><h1>今天这顿，<br>怎么吃更合适？</h1><p>查找楸苑、楠苑、梓苑食堂菜品，结合饮食目标生成营养搭配建议。</p><div class="hero-actions"><a href="#canteens">选择食堂</a><a href="#recommend">开始智能推荐</a></div></div><div class="hero-photo"><img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=900&q=85" alt="健康餐食"></div></div></header>
 <nav><a href="#canteens">食堂菜单</a><a href="#recommend">智能推荐</a><a href="#nutrition">营养分析</a><a href="#about">使用说明</a></nav>
 <main>
 <div class="notice">营养数据为按常见食堂单份菜品进行的参考估算，并非食堂实际检测值。具体数值会受份量、配方、用油和烹饪方式影响；本平台仅提供日常饮食参考，不用于疾病诊断或治疗。</div>
 <div class="dash-grid"><div class="card goal-card"><div class="small">云大校园饮食助手</div><h3>从真实菜单出发，找到适合自己的搭配</h3><div class="goal-row"><div class="ring" id="goalRing" data-label="45" style="--goal-progress:100%"></div><div><b>46 个菜单条目已建立</b><div class="small">3 个食堂 · 10 个楼层/区域 · 参考营养数据</div></div></div></div><div class="card quick-card"><div class="food-icon">🥗</div><div><b>今日搭配小提示</b><div class="small">优先考虑主食、蛋白质和蔬菜的组合</div><button style="margin-top:9px;padding:7px 12px;font-size:12px" onclick="document.getElementById('recommend').scrollIntoView({behavior:'smooth'})">生成我的搭配</button></div></div></div>
 <section id="canteens" class="section"><div class="panel-title"><div><h2>食堂菜品查询</h2><p class="lead">选择食堂和楼层，查看对应菜单及每份参考营养信息。</p></div><span class="estimate">全部菜品营养数据均为参考估算</span></div><div class="choice-grid" id="canteenChoices"></div><label class="field-label">选择楼层 / 区域</label><div class="floor-row" id="floorChoices"></div><div class="searchbar" style="margin-top:14px"><input id="dishSearch" placeholder="搜索菜品名称，例如：瓦香鸡、牛肉面"><button onclick="renderDishList()">搜索</button></div><div class="small" id="dishCount" style="margin-top:10px"></div><div class="dish-grid" id="dishList"></div><div class="dish-photo-note">图片为菜品参考图，非云大食堂实拍。</div></section>
-<section id="recommend" class="section"><h2>智能饮食搭配</h2><p class="lead">先选餐次、食堂和楼层，再结合身体状态与饮食目标，生成一份完整搭配（主食+蛋白质+配餐），不跨食堂、不跨楼层。</p><div class="card"><div class="field-label">① 想去哪个食堂？</div><div class="floor-row" id="recCanteens"></div><div class="field-label">② 选择楼层</div><div class="floor-row" id="recFloors"></div><div class="field-label">③ 选择餐次</div><div class="floor-row" id="mealChoices"></div><div class="field-label">④ 当前状态（单选）</div><div class="tag-row" id="stateChoices"></div><div class="field-label">⑤ 饮食目标（单选）</div><div class="tag-row" id="goalChoices"></div><div class="action-row"><button onclick="generatePlans()">生成推荐</button><button class="secondary" onclick="generatePlans()">↻ 换一换</button><button class="secondary" onclick="resetPrefs()">恢复均衡饮食</button></div><p class="tiny">不选择状态或目标时，默认按均衡饮食推荐。若当前楼层菜品不足，系统会如实提示，不会借用其他楼层菜品。</p></div><div id="plans" class="result"><div class="empty">选好餐次、食堂和楼层后，点击「生成推荐」，会给出整套搭配、总价与总热量。</div></div></section><section id="myMeal" class="section"><div class="panel-title"><div><h2>我的本餐</h2><p class="lead">按早餐/午餐/晚餐分别记录，自动累计今日热量与三大营养素。</p></div><button class="secondary" onclick="clearBasket()">清空</button></div><div class="meal-tabs" id="basketMealTabs"></div><div id="basketBox" class="empty">还没有自选商品。点开任意菜品或店铺商品，点「＋」加入本餐。</div></section>
+<section id="recommend" class="section"><h2>智能饮食搭配</h2><p class="lead">先选餐次、食堂和楼层，再结合身体状态与饮食目标，生成一份完整搭配（主食+蛋白质+配餐），不跨食堂、不跨楼层。</p><div class="card"><div class="field-label">① 想去哪个食堂？</div><div class="floor-row" id="recCanteens"></div><div class="field-label">② 选择楼层</div><div class="floor-row" id="recFloors"></div><div class="field-label">③ 选择餐次</div><div class="floor-row" id="mealChoices"></div><div class="field-label">④ 当前状态（单选）</div><div class="tag-row" id="stateChoices"></div><div class="field-label">⑤ 饮食目标（单选）</div><div class="tag-row" id="goalChoices"></div><div class="action-row"><button onclick="generatePlans()">生成推荐</button><button class="secondary" onclick="generatePlans()">↻ 换一换</button><button class="secondary" onclick="resetPrefs()">恢复均衡饮食</button></div><p class="tiny">不选择状态或目标时，默认按均衡饮食推荐。若当前楼层菜品不足，系统会如实提示，不会借用其他楼层菜品。</p></div><div id="plans" class="result"><div class="empty">选好餐次、食堂和楼层后，点击「生成推荐」，会给出整套搭配、总价与总热量。</div></div></section><section id="myMeal" class="section"><aside id="profilePanel" class="target-groups"><div class="pf-head"><b>目标人群</b><span>切换后全天热量与推荐同步调整</span></div><div class="pf-cards" id="profileCards"></div></aside><div class="panel-title"><div><h2>我的本餐</h2><p class="lead">按早餐/午餐/晚餐分别记录，自动累计今日热量与三大营养素。</p></div><button class="secondary" onclick="clearBasket()">清空</button></div><div class="meal-tabs" id="basketMealTabs"></div><div id="basketBox" class="empty">还没有自选商品。点开任意菜品或店铺商品，点「＋」加入本餐。</div></section>
 <section id="nutrition" class="section"><h2>本餐营养分析</h2><p class="lead">选择上方任意推荐方案，即可查看总热量、三大营养素及下一餐建议。</p><div id="nutritionAnalysis" class="empty">尚未选择推荐方案。</div></section>
 <section id="about" class="section"><h2>数据与使用说明</h2><div class="articles"><article class="card article"><h3>估算口径</h3><p>按常见单份食堂餐食估算；每份热量和三大营养素均标记为参考估算，不代表实际售卖份量的检测结果。</p></article><article class="card article"><h3>动态菜品</h3><p>自选菜、麻辣香锅、轻食及菜单点菜等菜品可进入份量估算器，按食材和份量调整营养值。</p></article><article class="card article"><h3>合理使用</h3><p>推荐结果用于日常饮食参考。过敏、疾病或特殊营养需求，请以专业人员建议为准。</p></article></div></section>
 <div class="footer">云大营养平台｜云南大学校园饮食营养推荐平台</div></main>
@@ -474,7 +492,7 @@ function generatePlans(){
  showAnalysis(0);
 }
 function planTotals(plan){let scale=1;return {kcal:Math.round(plan.items.reduce((s,d)=>s+d.kcal*scale,0)),p:Math.round(plan.items.reduce((s,d)=>s+d.p*scale,0)),f:Math.round(plan.items.reduce((s,d)=>s+d.f*scale,0)),c:Math.round(plan.items.reduce((s,d)=>s+d.c*scale,0))};}
-function showAnalysis(index){let plan=planStore[index];if(!plan)return;let totals=planTotals(plan),kcal=totals.kcal,p=totals.p,f=totals.f,c=totals.c;selectedPlan=plan;let total=p*4+c*4+f*9;let pPct=total?Math.round(p*4/total*100):0,fPct=total?Math.round(f*9/total*100):0,cPct=100-pPct-fPct;let comments=[];if(p<20)comments.push('本餐蛋白质估算相对有限，可在下一餐增加蛋、奶、鱼、肉或豆制品。');else comments.push('本餐有一定蛋白质来源，下一餐可继续保持多样化。');if(c>80)comments.push('本餐碳水化合物相对较多，下一餐可适当调整主食份量，并增加蔬菜和蛋白质。');if(f>35)comments.push('本餐脂肪估算偏高，下一餐可选择少油烹调并增加蔬菜。');if(plan.items.some(d=>d.kind==='dynamic'))comments.push('其中有可变配方菜品，实际营养受选材影响较大。');if(!comments.length)comments.push('本餐营养结构可作为参考，建议全天搭配不同颜色蔬果和多种蛋白质来源。');let next=f>35?'下一餐可优先选择清淡烹调的蔬菜、适量主食和瘦肉/豆制品。':p<20?'下一餐可增加鸡蛋、牛奶、鱼肉或豆制品等蛋白质来源。':'下一餐继续安排蔬菜、全谷物和适量优质蛋白，保持食物多样。';$('nutritionAnalysis').className='analysis-box';$('nutritionAnalysis').innerHTML=`<div class="panel-title"><div><b>本餐搭配 · ${plan.items.map(d=>esc(d.name)).join(' + ')}</b><div class="tiny">${esc(plan.canteen)} · ${esc(plan.floor)} · 整套搭配 · 参考估算</div></div><div class="plan-total">${kcal} kcal</div></div><div class="macro-row"><div class="macro"><b>${p}g</b><small>蛋白质</small></div><div class="macro"><b>${f}g</b><small>脂肪</small></div><div class="macro"><b>${c}g</b><small>碳水化合物</small></div></div><h4>三大营养素能量占比（估算）</h4>${nutriDonut(p,f,c,kcal)}<p><b>菜品营养特点：</b>${plan.items.map(d=>esc(d.feature)).join('；')}</p><p><b>本餐分析：</b>${comments.map(esc).join(' ')}</p><p><b>下一餐建议：</b>${esc(next)}</p><p class="tiny">能量占比根据蛋白质、脂肪、碳水化合物克数按 4/9/4 kcal/g 计算。整套搭配在同一食堂同一楼层内组合，不拼半份、不使用不存在商品；营养数据为参考估算，实际以门店配方和售卖份量为准。</p>`;}
+function showAnalysis(index){let plan=planStore[index];if(!plan)return;let totals=planTotals(plan),kcal=totals.kcal,p=totals.p,f=totals.f,c=totals.c;selectedPlan=plan;let total=p*4+c*4+f*9;let pPct=total?Math.round(p*4/total*100):0,fPct=total?Math.round(f*9/total*100):0,cPct=100-pPct-fPct;let comments=[];if(p<20)comments.push('本餐蛋白质估算相对有限，可在下一餐增加蛋、奶、鱼、肉或豆制品。');else comments.push('本餐有一定蛋白质来源，下一餐可继续保持多样化。');if(c>80)comments.push('本餐碳水化合物相对较多，下一餐可适当调整主食份量，并增加蔬菜和蛋白质。');if(f>35)comments.push('本餐脂肪估算偏高，下一餐可选择少油烹调并增加蔬菜。');if(plan.items.some(d=>d.kind==='dynamic'))comments.push('其中有可变配方菜品，实际营养受选材影响较大。');if(!comments.length)comments.push('本餐营养结构可作为参考，建议全天搭配不同颜色蔬果和多种蛋白质来源。');let next=f>35?'下一餐可优先选择清淡烹调的蔬菜、适量主食和瘦肉/豆制品。':p<20?'下一餐可增加鸡蛋、牛奶、鱼肉或豆制品等蛋白质来源。':'下一餐继续安排蔬菜、全谷物和适量优质蛋白，保持食物多样。';$('nutritionAnalysis').className='analysis-box';$('nutritionAnalysis').innerHTML=`<div class="panel-title"><div><b>本餐搭配 · ${plan.items.map(d=>esc(d.name)).join(' + ')}</b><div class="tiny">${esc(plan.canteen)} · ${esc(plan.floor)} · 整套搭配 · 参考估算</div></div><div class="plan-total">${kcal} kcal</div></div><div class="macro-row"><div class="macro"><b>${p}g</b><small>蛋白质</small></div><div class="macro"><b>${f}g</b><small>脂肪</small></div><div class="macro"><b>${c}g</b><small>碳水化合物</small></div></div><p class="tiny" style="margin:2px 0 8px">按「${PROFILES[profileKey].name}」目标 ${dailyTarget()} kcal/天，本餐约占全天的 ${Math.round(kcal/dailyTarget()*100)}%。参考估算。</p><h4>三大营养素能量占比（估算）</h4>${nutriDonut(p,f,c,kcal)}<p><b>菜品营养特点：</b>${plan.items.map(d=>esc(d.feature)).join('；')}</p><p><b>本餐分析：</b>${comments.map(esc).join(' ')}</p><p><b>下一餐建议：</b>${esc(next)}</p><p class="tiny">能量占比根据蛋白质、脂肪、碳水化合物克数按 4/9/4 kcal/g 计算。整套搭配在同一食堂同一楼层内组合，不拼半份、不使用不存在商品；营养数据为参考估算，实际以门店配方和售卖份量为准。</p>`;}
 const shopPhotoIndex={'手抓饼':0,'解暑绿豆冰':1,'烧麦':2,'烧麦（3个）':2,'卤蛋':3,'冰镇醇豆饮':4,'手抓饼+培根+牛奶燕麦1':5,'双人特惠：手抓饼+鸡蛋+牛奶燕麦+烧麦':6,'双人粥粥好运：桂香鲜奶米布+牛奶燕麦':7,'养妍红枣+烧麦+蒸鸡蛋':8,'单人爱心早餐：手抓饼+鸡蛋+养妍红枣':9,'牛奶燕麦':10,'桂香鲜奶米布':11,'元气黑芝麻':12,'低卡玉米汁':13,'养妍红枣':14,'焦糖核桃乳':15};
 const baozhongbaPhotoIndex={'香辣鸡腿堡':0,'板烧鸡腿堡':1,'墨西哥鸡肉卷（甜辣酱）':2,'老北京鸡肉卷（甜面酱）':3,'爆浆鸡排堡':4,'至尊鲜虾堡':5,'至尊鳕鱼堡':6,'劲脆鸡根（2个）':7,'咔滋脆鸡腿（1个）':8,'辣条贝贝鸡（130g）':9,'海苔肉松炸鸡':10,'韩式炸鸡':11,'叫了只炸鸡':12,'爆汁灵魂烤鸡（半只）':13,'超有料鸡排':14,'卤辣叉骨（130g）':15,'黄金薯条（含番茄酱×2）':16,'松香海苔荷兰薯':17,'黑椒鸡块（含糖醋酱×1）':18,'盐酥鸡米花':19,'脆皮年糕':20,'咖喱里脊肉串（2串）':21,'爆浆鸡排（1个）':22,'可乐':23,'雪碧':24,'冰杯一个':25};
 function shopThumb(name){let i=shopPhotoIndex[name];if(i!==undefined){const x=(i%4)*100/3,y=Math.floor(i/4)*100/3;return '<span class="shop-menu-thumb" role="img" aria-label="'+esc(name)+'小程序商品图" style="background-position:'+x+'% '+y+'%"></span>';}i=baozhongbaPhotoIndex[name];if(i!==undefined){const x=(i%6)*20,y=Math.floor(i/6)*25;return '<span class="shop-menu-thumb baozhongba" role="img" aria-label="'+esc(name)+'小程序商品图" style="background-position:'+x+'% '+y+'%"></span>';}return '';}
@@ -530,12 +548,37 @@ function renderBasketMeals(){
   return '<button class="'+(m===basketMeal?'active':'')+'" onclick="setBasketMeal(\''+m+'\')">'+m+(k?' · '+k+' kcal':'')+'</button>';
  }).join('');
 }
+const PROFILES={
+ normal:{name:'正常吃饭',kcal:2000,goal:'',desc:'三餐正常吃，均衡不控卡',img:'assets/profiles/normal.jpg'},
+ lose:{name:'减脂塑形',kcal:1600,goal:'减脂控制热量',desc:'控制总热量，少油高蛋白',img:'assets/profiles/lose.jpg'},
+ muscle:{name:'增肌健身',kcal:2400,goal:'增肌补充蛋白质',desc:'训练日补足蛋白与主食',img:'assets/profiles/muscle.jpg'},
+ light:{name:'清淡轻食',kcal:1800,goal:'清淡饮食',desc:'少油少盐，减少油炸',img:'assets/profiles/light.jpg'}
+};
+let profileKey=(function(){try{return localStorage.getItem('yd_profile')||'normal';}catch(e){return 'normal';}})();
+function dailyTarget(){const p=PROFILES[profileKey]||PROFILES.normal;return p.kcal;}
+function renderProfiles(){
+ const box=$('profileCards');if(!box)return;
+ box.innerHTML=Object.keys(PROFILES).map(function(k){
+  const p=PROFILES[k];
+  return '<div class="pf-card'+(k===profileKey?' active':'')+'" onclick="setProfile(\''+k+'\')"><img src="'+p.img+'" alt="'+p.name+'"><div class="pf-body"><b>'+p.name+'</b><span>'+p.desc+'</span><em>'+p.kcal+' kcal/天</em></div></div>';
+ }).join('');
+}
+function setProfile(k){
+ if(!PROFILES[k])return;
+ profileKey=k;
+ try{localStorage.setItem('yd_profile',k);}catch(e){}
+ selectedGoals=PROFILES[k].goal?[PROFILES[k].goal]:[];
+ renderTags();renderProfiles();renderBasket();
+ if($('plans').querySelector('.plan-card')){rotation=0;lastPlanSig='';if(typeof lastPlanShop!=='undefined')lastPlanShop='';generatePlans();}
+ toast('已切换为「'+PROFILES[k].name+'」· 每日 '+PROFILES[k].kcal+' kcal');
+}
 function mascotHtml(k){
  let cls,img,tag,msg;
+ const ratio=k/dailyTarget();
  if(k<=0){cls='p0';img='idle';tag='饥饿';msg='饿到肚子咕咕叫…好难受';}
- else if(k<600){cls='p1';img='idle';tag='饥饿';msg='还是好饿，再吃点吧…';}
- else if(k<1200){cls='p2';img='idle';tag='半饱';msg='不饿了，有点力气了';}
- else if(k<1900){cls='p3';img='laugh';tag='饱腹';msg='吃饱啦，好开心！';}
+ else if(ratio<0.3){cls='p1';img='idle';tag='饥饿';msg='还是好饿，再吃点吧…';}
+ else if(ratio<0.6){cls='p2';img='idle';tag='半饱';msg='不饿了，有点力气了';}
+ else if(ratio<0.95){cls='p3';img='laugh';tag='饱腹';msg='吃饱啦，好开心！';}
  else {cls='p4';img='laugh';tag='过量';msg='吃得有点撑…';}
  return '<div class="mascot-row '+cls+'"><div class="mascot"><img src="assets/mascot/'+img+'.png" alt="今日状态"><i class="drop"></i></div><div class="mascot-say"><b>'+tag+'</b><span>'+msg+'</span></div></div>';
 }
@@ -548,12 +591,13 @@ function renderBasket(){
  const order=['早餐','午餐','晚餐'];
  const groups=order.map(function(m){return {m:m,items:basket.map(function(x,i){return {x:x,i:i};}).filter(function(o){return (o.x.meal||'早餐')===m;})};}).filter(function(g){return g.items.length;});
  box.className='';
+ const tgt=dailyTarget();
  box.innerHTML=mascotHtml(t.kcal)+groups.map(function(g){
   const k=g.items.reduce(function(s,o){return s+o.x.kcal;},0);
   return '<div class="basket-meal-group"><h4>'+g.m+'<span>'+k+' kcal</span></h4>'+g.items.map(function(o){return row(o.x,o.i);}).join('')+'</div>';
  }).join('')+
- '<div class="basket-sum">'+nutriDonut(t.p,t.f,t.c,t.kcal)+'<div class="basket-total">今日累计 <b>'+t.kcal+' / 2000 kcal</b><br><span>'+(t.kcal<=2000?'还可摄入约 '+(2000-t.kcal)+' kcal':'已超出约 '+(t.kcal-2000)+' kcal')+'（参考值）</span><br><span>蛋白质 '+t.p+'g · 脂肪 '+t.f+'g · 碳水 '+t.c+'g</span><br><span>预估总价 约 ¥'+Math.round(t.price)+'</span></div></div><div class="day-bar"><i style="width:'+Math.min(100,Math.round(t.kcal/20))+'%"></i></div>';
+ '<div class="basket-sum">'+nutriDonut(t.p,t.f,t.c,t.kcal)+'<div class="basket-total">今日累计 <b>'+t.kcal+' / '+tgt+' kcal</b><br><span>'+(t.kcal<=tgt?'还可摄入约 '+(tgt-t.kcal)+' kcal':'已超出约 '+(t.kcal-tgt)+' kcal')+'（参考估算）</span><br><span>目标人群：'+PROFILES[profileKey].name+'（'+tgt+' kcal/天）</span><br><span>蛋白质 '+t.p+'g · 脂肪 '+t.f+'g · 碳水 '+t.c+'g</span><br><span>预估总价 约 ¥'+Math.round(t.price)+'</span></div></div><div class="day-bar"><i style="width:'+Math.min(100,Math.round(t.kcal/tgt*100))+'%"></i></div>';
 }
 function closeDishModal(){$('dishModal').classList.remove('show');}
-renderBasket();init();
+renderProfiles();if(PROFILES[profileKey].goal)selectedGoals=[PROFILES[profileKey].goal];renderBasket();init();
 </script></body></html>
