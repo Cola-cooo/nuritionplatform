@@ -139,28 +139,24 @@ const menuData = [
 ['梓苑','三楼','牛排',620,42,34,18,'牛排可提供较多蛋白质，脂肪取决于部位、克重和烹饪用油。','优先选择适量瘦肉，搭配蔬菜和主食；参考估算']
 ].map((a,i)=>{const storeNames=['堡中霸','肯德基','朱家小馆','马姐牛肉','曹氏鸭脖','汉堡王','南国一豆'];const isStore=storeNames.includes(a[2]);const shop=storeMenuData[a[2]]||null;return {id:i+1,canteen:a[0],floor:a[1],name:a[2],kcal:a[3],p:a[4],f:a[5],c:a[6],feature:isStore?'这是店铺/窗口名称，不是单道菜品；已将菜单核实与营养估算分开。':a[7],advice:isStore?'先从该店实际菜单中选具体单品，再按正常售卖份量估算。':a[8],kind:isStore?'store':(a[9]||'regular'),storeMenu:shop?.items||[],storeCategories:shop?.categories||[],storeSource:shop?.source||'暂未找到能确认属于该校区该楼层该店铺的公开菜单，不能用同名外校/外地商家菜单代替。',storeUrl:shop?.url||'',checked:shop?.checked||'',source:isStore?(shop?.items?.length?'已查到该店线上菜单':'店铺入口·菜单待核实'):(a[9]==='pending'?'待完善':'参考估算')};});
 
-const foodPhoto={
- noodle:'https://images.deliveryhero.io/image/fd-my/LH/r1v2-listing.jpg',
- mala:'https://images.deliveryhero.io/image/fd-sg/LH/s8ry-listing.jpg',
- rice:'https://d3s8tbcesxr4jm.cloudfront.net/recipe-images/v3/authentic-chinese-fried-rice/3_medium.jpg',
- salad:'https://images.happycow.net/venues/1024/40/30/hcmp403046_2817140.jpeg',
- burger:'https://media.licdn.com/dms/image/v2/D5612AQEXCIT23Um9IQ/article-cover_image-shrink_600_2000/article-cover_image-shrink_600_2000/0/1681990891155?e=2147483647&t=iq4-c1yYtO5Dg4RBkCglR4DEz3bigIUTZJ3rOH6-WJY&v=beta',
- feast:'https://tb-static.uber.com/prod/image-proc/processed_images/05724d1b810eb2730b8e511f1b714d4b/9e31c708e4cf73b6e3ea1bd4a9b6e16b.jpeg',
- soup:'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=600&q=80',
- hotpot:'https://commons.wikimedia.org/wiki/Special:FilePath/Chongqing_Hot_Pot.jpg?width=640'
+// 每个菜名绑定独立的检索图片；不使用通用分类图，不跨菜名复用。
+const foodPhotoByName={
+ '柳州螺蛳粉':'https://newsfile.futunn.com/public/NN-PersistNewsContentImage/7781/20260220/69051825-0-bf2bcb5ba3b4336c87e997a2a1bdf3e7.jpg/big',
+ '螺蛳粉':'https://newsfile.futunn.com/public/NN-PersistNewsContentImage/7781/20260220/69051825-0-bf2bcb5ba3b4336c87e997a2a1bdf3e7.jpg/big',
+ '上海小馄饨':'https://n.sinaimg.cn/sinacn/w800h640/20180210/e6de-fyrkuxt0390291.jpg',
+ '炸鸡':'https://media.triple.guide/triple-cms/c_limit%2Cf_auto%2Ch_1024%2Cw_1024/d812c189-4e4d-4c2b-a648-82da74579088.jpeg',
+ '小锅米线':'https://img.wongnai.com/p/1920x0/2024/06/06/5855c18630c5424c98d8560be28176ea.jpg',
+ '广州肠粉':'https://k.sinaimg.cn/n/sinacn20200122ac/211/w600h411/20200122/3dd6-innckce8414679.jpg/w700d1q75cms.jpg',
+ '麻辣香锅':'https://p2.itc.cn/images01/20201116/33dc408d885b458bace38acdb9f88c90.jpeg',
+ '猪脚饭':'https://img06.weeecdn.com/item/image/455/083/49C7EDCE74D4D9B9.jpeg%21c750x0.jpeg',
+ '兰州拉面':'https://media.zenfs.com/ko/gotv_ctitv_com_tw_678/c4f4b5154c445446a0f8a46bb8876b67',
+ '冒菜':'https://www.8158.com/storage/uploads/image/srtm/2021/12/30/011d741196693311ecab7902420a760002.png',
+ '轻食':'https://img.gogoshop.cloud/4d29e3f5/gftlgZM8-0X.jpg',
+ '虾仁捞饭':'https://www.freshpack.mn/_next/image?q=75&url=https%3A%2F%2Fcdnd.techpack.mn%2Fuploads%2Fmedium%2FXa-n7icQhgDMnkJ46xXp0&w=1080',
+ '罐罐砂锅':'https://picdn.gomaji.com/uploads/stores/915/236915/375461/%E9%B4%A8%E9%9B%9C%E6%B9%AF%E7%B1%B3%E7%B7%9A.jpg'
 };
-function dishImage(d){
- const n=d.name;
- if(/螺蛳粉|馄饨|米线|肠粉|拉面|牛肉面|砂锅|砂锅|面/.test(n)) return foodPhoto.noodle;
- if(/麻辣香锅|冒菜|火锅|猪肚鸡|水煮肉片/.test(n)) return foodPhoto.mala;
- if(/炒饭|饭|盖饭|猪脚饭|鸡油饭|捞饭|菠萝/.test(n)) return foodPhoto.rice;
- if(/轻食|自选菜|蔬菜/.test(n)) return foodPhoto.salad;
- if(/汉堡|堡中霸|肯德基|炸鸡/.test(n)) return foodPhoto.burger;
- if(/牛排|瓦香鸡|黄焖鸡|鸡|猪脚/.test(n)) return foodPhoto.feast;
- if(/糖水/.test(n)) return foodPhoto.soup;
- if(/牛肉|鸭脖|石锅|罐罐/.test(n)) return foodPhoto.feast;
- return foodPhoto.feast;
-}
+function dishImage(d){return foodPhotoByName[d.name]||'';}
+
 
 const canteens=['楸苑','楠苑','梓苑'];
 const states=['非常饿','正常饥饿','不太饿','刚运动结束','今天运动量较少'];
