@@ -80,12 +80,17 @@ main{padding-top:20px}
 .meal-tabs{display:flex;gap:8px;margin:6px 0 12px;flex-wrap:wrap}
 .meal-tabs button{padding:7px 14px;font-size:13px;box-shadow:none;background:#eef6ee;color:#2f6b58}
 .meal-tabs button.active{background:var(--green);color:#fff}
-.mini-add{padding:3px 9px;font-size:12px;box-shadow:none;margin-left:auto;flex:none;border-radius:7px}
+.mini-add{padding:5px 12px;font-size:14px;min-width:36px;box-shadow:none;margin-left:auto;flex:none;border-radius:7px}
 .basket-meal-group{margin-bottom:12px}
 .basket-meal-group h4{margin:0 0 6px;font-size:14px;color:var(--deep);display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding-bottom:4px}
 .basket-meal-group h4 span{font-weight:400;color:var(--muted);font-size:12px}
 .day-bar{height:9px;background:#e9f0e9;border-radius:99px;overflow:hidden;margin:10px 0 2px}
 .day-bar i{display:block;height:100%;background:linear-gradient(90deg,#8cd276,#1f8266)}
+</style><style>
+.shop-cart-bar{margin-top:14px;padding:9px 12px;border-radius:10px;background:#eaf7ea;font-size:13px;color:#2c6b57;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.shop-cart-bar button{padding:6px 12px;font-size:12px;margin-left:auto;box-shadow:none}
+#toastBox{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#17362d;color:#fff;padding:10px 16px;border-radius:99px;font-size:13px;z-index:999;opacity:0;transition:.2s;pointer-events:none;max-width:86vw;text-align:center}
+#toastBox.show{opacity:1}
 </style></head><body>
 <header><div class="top"><div class="brand">云大营养<span>·</span>NutriWise</div><div class="tag">云南大学校园饮食营养推荐平台</div><button onclick="document.getElementById('recommend').scrollIntoView({behavior:'smooth'})">✦ 智能搭配</button></div><div class="hero"><div><div class="eyebrow">✦ 吃得明白，选得合适</div><h1>今天这顿，<br>怎么吃更合适？</h1><p>查找楸苑、楠苑、梓苑食堂菜品，结合饮食目标生成营养搭配建议。</p><div class="hero-actions"><a href="#canteens">选择食堂</a><a href="#recommend">开始智能推荐</a></div></div><div class="hero-photo"><img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=900&q=85" alt="健康餐食"></div></div></header>
 <nav><a href="#canteens">食堂菜单</a><a href="#recommend">智能推荐</a><a href="#nutrition">营养分析</a><a href="#about">使用说明</a></nav>
@@ -467,7 +472,7 @@ function compactShopMenu(d){
  const renderName=n=>'<li>'+shopThumb(n)+'<span>'+esc(n)+'</span><button class="mini-add" onclick="addStoreItem(this,\''+esc(d.name)+'\',\''+esc(n)+'\',\'\')">＋</button></li>';
  return '<ul class="shop-menu-list">'+shown.map(renderName).join('')+'</ul>'+(rest.length?'<details class="shop-more"><summary>查看更多（剩余'+rest.length+'项）</summary><ul class="shop-menu-list">'+rest.map(renderName).join('')+'</ul></details>':'');
 }
-function openDish(id){let d=menuData.find(x=>x.id===id);let shopHtml=d.kind==='store'?`${((d.storeCategories&&d.storeCategories.length)||(d.storeMenu&&d.storeMenu.length))?`<h4>菜单</h4>${compactShopMenu(d)}`:``}`:'';$('dishModalBody').innerHTML=`<h3>${esc(d.name)}</h3><p class="small">${d.canteen} · ${d.floor} · ${d.kind==='store'?'店铺/窗口信息':'菜品信息'}</p>${d.name==='南国一豆'?`<div class="modal-food-photo nanguo-modal-cover" role="img" aria-label="南国一豆小程序商品参考图"></div>`:d.name==='堡中霸'?`<div class="modal-food-photo baozhongba-modal-cover" role="img" aria-label="堡中霸小程序汉堡商品图"></div>`:dishImage(d)?`<img class="modal-food-photo" src="${dishImage(d)}" alt="${esc(d.name)}实物参考图" onerror="this.outerHTML='<div class=modal-photo-placeholder>暂无图片</div>'">`:`<div class="modal-photo-placeholder">暂无图片</div>`}${d.kind==='store'?shopHtml:d.kind==='pending'?'<div class="estimate">营养信息</div>':`<div class="plan-total">${d.kcal} kcal <span class="tiny">/ 单份参考估算</span></div><div class="macro-row"><div class="macro"><b>${d.p}g</b><small>蛋白质</small></div><div class="macro"><b>${d.f}g</b><small>脂肪</small></div><div class="macro"><b>${d.c}g</b><small>碳水</small></div></div>`}${d.kind==='store'?'':`<p><b>营养特点：</b>${esc(d.feature)}</p><p><b>饮食建议：</b>${esc(d.advice)}</p>${d.kind==='dynamic'?dynamicEstimator(d):''}<button class="secondary" style="width:100%;margin-top:8px" onclick="addToBasket(${d.id})">＋ 加入本餐</button><p class="tiny">具体营养数据按实际单品和份量估算。</p>`}`;$('dishModal').classList.add('show');}
+function openDish(id){let d=menuData.find(x=>x.id===id);let shopHtml=d.kind==='store'?`${((d.storeCategories&&d.storeCategories.length)||(d.storeMenu&&d.storeMenu.length))?`<h4>菜单</h4>${compactShopMenu(d)}<div id="shopCartBar" class="shop-cart-bar"></div>`:``}`:'';$('dishModalBody').innerHTML=`<h3>${esc(d.name)}</h3><p class="small">${d.canteen} · ${d.floor} · ${d.kind==='store'?'店铺/窗口信息':'菜品信息'}</p>${d.name==='南国一豆'?`<div class="modal-food-photo nanguo-modal-cover" role="img" aria-label="南国一豆小程序商品参考图"></div>`:d.name==='堡中霸'?`<div class="modal-food-photo baozhongba-modal-cover" role="img" aria-label="堡中霸小程序汉堡商品图"></div>`:dishImage(d)?`<img class="modal-food-photo" src="${dishImage(d)}" alt="${esc(d.name)}实物参考图" onerror="this.outerHTML='<div class=modal-photo-placeholder>暂无图片</div>'">`:`<div class="modal-photo-placeholder">暂无图片</div>`}${d.kind==='store'?shopHtml:d.kind==='pending'?'<div class="estimate">营养信息</div>':`<div class="plan-total">${d.kcal} kcal <span class="tiny">/ 单份参考估算</span></div><div class="macro-row"><div class="macro"><b>${d.p}g</b><small>蛋白质</small></div><div class="macro"><b>${d.f}g</b><small>脂肪</small></div><div class="macro"><b>${d.c}g</b><small>碳水</small></div></div>`}${d.kind==='store'?'':`<p><b>营养特点：</b>${esc(d.feature)}</p><p><b>饮食建议：</b>${esc(d.advice)}</p>${d.kind==='dynamic'?dynamicEstimator(d):''}<button class="secondary" style="width:100%;margin-top:8px" onclick="addToBasket(${d.id})">＋ 加入本餐</button><p class="tiny">具体营养数据按实际单品和份量估算。</p>`}`;$('dishModal').classList.add('show');}
 function dynamicEstimator(d){return `<div class="analysis-box"><b>按实际选材调整（简易估算器）</b><p class="tiny">选择加料和份量，估算会在当前参考值上动态调整；这不是该商家的实测营养值。</p><label class="field-label">额外蛋白质食材</label><select class="form-control" id="extraProtein"><option value="0">不额外添加</option><option value="80">鸡蛋 / 豆腐（约一份） +80 kcal</option><option value="140">鸡肉 / 牛肉（约一份） +140 kcal</option><option value="90">虾仁（约一份） +90 kcal</option></select><label class="field-label">蔬菜份量</label><select class="form-control" id="extraVeg"><option value="0">不额外添加</option><option value="35">半份蔬菜 +35 kcal</option><option value="70">一份蔬菜 +70 kcal</option></select><label class="field-label">主食份量</label><select class="form-control" id="starchScale"><option value="1">标准份</option><option value="0.5">半份</option><option value="1.5">1.5 份</option></select><button style="margin-top:10px" onclick="calcDynamic(${d.id})">计算调整后估算</button><div id="dynamicResult" class="small" style="margin-top:8px"></div></div>`;}
 function calcDynamic(id){let d=menuData.find(x=>x.id===id),protein=+$('extraProtein').value,veg=+$('extraVeg').value,scale=+$('starchScale').value;let kcal=Math.round((d.kcal*0.72*scale)+(d.kcal*0.28)+protein+veg),p=Math.round(d.p*0.75+protein/5+veg/10),f=Math.round(d.f*0.75+protein/25),c=Math.round(d.c*scale+veg/10);$('dynamicResult').innerHTML=`调整后约 <b>${kcal} kcal</b>；蛋白质 ${p}g、脂肪 ${f}g、碳水 ${c}g。<br><span class="tiny">估算模型仅用于份量变化演示，实际值可能有较大误差。</span>`;}
 function nutriDonut(p,f,c,kcal){
@@ -475,15 +480,18 @@ function nutriDonut(p,f,c,kcal){
  const pp=e?Math.round(p*4/e*100):0, fp=e?Math.round(f*9/e*100):0, cp=e?100-pp-fp:0;
  return `<div class="donut-wrap"><div class="donut" style="background:conic-gradient(#2e9e7a 0 ${pp}%,#f0a63c ${pp}% ${pp+fp}%,#6f8fd8 ${pp+fp}% 100%)"><div class="donut-hole"><b>${kcal}</b><small>kcal</small></div></div><div class="donut-legend"><div><i style="background:#2e9e7a"></i>蛋白质 <b>${p}g</b> · ${pp}%</div><div><i style="background:#f0a63c"></i>脂肪 <b>${f}g</b> · ${fp}%</div><div><i style="background:#6f8fd8"></i>碳水 <b>${c}g</b> · ${cp}%</div></div></div>`;
 }
-function addToBasket(id){const d=menuData.find(x=>x.id===id);if(!d||d.kind==='store'||d.kind==='pending')return;const n=itemNutrition(d.name);basket.push({name:d.name,canteen:d.canteen,floor:d.floor,shop:'',meal:basketMeal,kcal:d.kcal,p:d.p,f:d.f,c:d.c,price:n.price||0});closeDishModal();saveBasket();renderBasket();$('myMeal').scrollIntoView({behavior:'smooth'});}
+function addToBasket(id){const d=menuData.find(x=>x.id===id);if(!d||d.kind==='store'||d.kind==='pending')return;const n=itemNutrition(d.name);basket.push({name:d.name,canteen:d.canteen,floor:d.floor,shop:'',meal:basketMeal,kcal:d.kcal,p:d.p,f:d.f,c:d.c,price:n.price||0});closeDishModal();saveBasket();renderBasket();toast('已加入'+basketMeal+' · '+d.name);$('myMeal').scrollIntoView({behavior:'smooth'});}
 function removeBasketItem(i){basket.splice(i,1);saveBasket();renderBasket();}
 function clearBasket(){basket=[];saveBasket();renderBasket();}
+function toast(msg){let t=$('toastBox');if(!t){t=document.createElement('div');t.id='toastBox';document.body.appendChild(t);}t.textContent=msg;t.className='show';clearTimeout(t._h);t._h=setTimeout(function(){t.className='';},1800);}
+function updateShopCartBar(){const b=$('shopCartBar');if(!b)return;const k=basket.reduce((s,x)=>s+x.kcal,0);b.innerHTML=basket.length?('<span>本餐已选 <b>'+basket.length+'</b> 件 · 今日 '+k+' kcal</span><button onclick="gotoBasket()">查看本餐</button>'):'点右侧「＋」把商品加入本餐';}
+function gotoBasket(){closeDishModal();$('myMeal').scrollIntoView({behavior:'smooth'});}
 function addStoreItem(btn,shop,name,priceText){
  const s=menuData.find(x=>x.name===shop)||{};
  const n=itemNutrition(name);
  const scale=/双人|2人/.test(name)?1.8:/套餐|特惠/.test(name)?1.3:1;
  basket.push({name:name,canteen:s.canteen||'',floor:s.floor||'',shop:shop,meal:basketMeal,kcal:Math.round(n.kcal*scale),p:Math.round(n.p*scale),f:Math.round(n.f*scale),c:Math.round(n.c*scale),price:parseYuan(priceText)||0});
- saveBasket();renderBasket();
+ saveBasket();renderBasket();updateShopCartBar();toast('已加入'+basketMeal+' · '+name);
  if(btn){btn.textContent='已加入';setTimeout(function(){btn.textContent='＋';},900);}
 }
 function saveBasket(){try{localStorage.setItem('yd_basket',JSON.stringify(basket));}catch(e){}}
@@ -497,7 +505,7 @@ function renderBasketMeals(){
 }
 function renderBasket(){
  const box=$('basketBox');
- renderBasketMeals();
+ renderBasketMeals();updateShopCartBar();
  if(!basket.length){box.className='empty';box.innerHTML='还没有自选商品。点开任意菜品或店铺商品，点「＋」加入本餐。';return;}
  const t=basket.reduce((a,x)=>{a.kcal+=x.kcal;a.p+=x.p;a.f+=x.f;a.c+=x.c;a.price+=x.price||0;return a;},{kcal:0,p:0,f:0,c:0,price:0});
  const row=(x,i)=>'<div class="basket-item"><div><b>'+esc(x.name)+'</b><small>'+esc(x.canteen)+' · '+esc(x.floor)+(x.shop?' · '+esc(x.shop):'')+' · '+x.kcal+' kcal · '+(x.price?'约 ¥'+x.price:'价格未标注')+'</small></div><button class="secondary" onclick="removeBasketItem('+i+')">移除</button></div>';
