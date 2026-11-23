@@ -212,19 +212,25 @@ function fitsMeal(d,meal){
  return !snack && !/(燕麦|手抓饼|烧麦|早餐|米布)/.test(n);
 }
 function nanguoBreakfastPool(){
- const specs=[
-  ['手抓饼',420,9,20,48,'¥4/份起','面饼提供碳水，煎制用油会影响脂肪。','可搭配鸡蛋或豆饮，作为早餐主食。'],
-  ['烧麦',80,3,3,12,'¥2/个','糯米和面皮提供碳水，馅料提供少量蛋白质。','按食量选择数量，可搭配鸡蛋或豆饮。'],
-  ['卤蛋',75,6,5,1,'¥2/个','鸡蛋提供蛋白质和脂肪。','可与主食搭配，组成更完整的早餐。'],
-  ['牛奶燕麦',180,6,5,28,'¥4/杯','燕麦提供碳水和膳食纤维，牛奶提供部分蛋白质。','适合搭配手抓饼或烧麦。'],
-  ['桂香鲜奶米布',220,5,7,34,'¥6/杯','米制品提供碳水，牛奶提供部分蛋白质。','可搭配鸡蛋等蛋白质食物。'],
-  ['元气黑芝麻',160,5,8,18,'¥5/杯','芝麻饮品含脂肪和一定蛋白质，具体配方会影响营养。','可作为饮品，不建议单独替代早餐。'],
-  ['养妍红枣',130,2,3,23,'¥5/杯','红枣饮品主要提供碳水，甜度影响能量。','留意甜度，可搭配蛋类和主食。'],
-  ['焦糖核桃乳',180,5,10,18,'¥6/杯','核桃乳含一定脂肪，糖和配方会影响能量。','适量饮用，搭配主食更均衡。'],
-  ['手抓饼+培根+牛奶燕麦1',560,15,24,60,'会员价 ¥8.9/份起','包含主食、培根和燕麦饮，是完整套餐。','按一份套餐食用，不拆分搭配。'],
-  ['养妍红枣+烧麦+蒸鸡蛋',350,13,9,48,'会员价 ¥6.9/份','包含饮品、烧麦和蒸蛋，兼有主食与蛋白质。','按完整套餐选择。']
+ const items={
+  '手抓饼':{k:420,p:9,f:20,c:48,price:4},'烧麦（3个）':{k:240,p:9,f:9,c:36,price:6},'卤蛋':{k:75,p:6,f:5,c:1,price:2},
+  '牛奶燕麦':{k:180,p:6,f:5,c:28,price:4},'冰镇醇豆饮':{k:150,p:7,f:5,c:18,price:5},'桂香鲜奶米布':{k:220,p:5,f:7,c:34,price:6},
+  '元气黑芝麻':{k:160,p:5,f:8,c:18,price:5},'低卡玉米汁':{k:120,p:2,f:1,c:25,price:5},'养妍红枣':{k:130,p:2,f:3,c:23,price:5}
+ };
+ const combos=[
+  {parts:['手抓饼','卤蛋','冰镇醇豆饮'],feature:'手抓饼提供主食，卤蛋补充蛋白质，醇豆饮搭配饮用。',advice:'一份早餐包含主食、蛋类和豆饮，适合正常食量。'},
+  {parts:['手抓饼','卤蛋','牛奶燕麦'],feature:'包含面饼、鸡蛋和燕麦奶饮，主食与蛋白质来源更齐全。',advice:'适合早餐食量较大时选择；如果觉得份量多，可改选烧麦组合。'},
+  {parts:['手抓饼','卤蛋','低卡玉米汁'],feature:'手抓饼搭配卤蛋和玉米汁，兼顾主食、蛋白质与饮品。',advice:'玉米汁仍含碳水，饮品甜度和实际配方会影响能量。'},
+  {parts:['烧麦（3个）','卤蛋','冰镇醇豆饮'],feature:'烧麦提供主食，卤蛋和豆饮补充蛋白质。',advice:'适合不想吃煎饼的早餐选择。'},
+  {parts:['烧麦（3个）','卤蛋','牛奶燕麦'],feature:'烧麦、鸡蛋和牛奶燕麦组成主食、蛋白质与饮品搭配。',advice:'份量相对完整，按食量选择即可。'},
+  {parts:['手抓饼','卤蛋','养妍红枣'],feature:'手抓饼搭配卤蛋和红枣饮品，包含主食、蛋白质与饮品。',advice:'红枣饮品可能含添加糖，留意甜度。'},
+  {parts:['烧麦（3个）','卤蛋','桂香鲜奶米布'],feature:'烧麦搭配鸡蛋和鲜奶米布，主食与蛋白质来源较丰富。',advice:'米布本身含碳水，可按食量选择烧麦数量。'},
+  {parts:['手抓饼','卤蛋','元气黑芝麻'],feature:'手抓饼和鸡蛋搭配黑芝麻饮品，补充主食、蛋白质及饮品。',advice:'芝麻饮品脂肪相对较高，适量饮用。'}
  ];
- return specs.map((x,i)=>({id:1001+i,canteen:'楠苑',floor:'一楼',name:x[0],kcal:x[1],p:x[2],f:x[3],c:x[4],price:x[5],feature:x[6],advice:x[7],kind:'storeItem'}));
+ return combos.map((combo,i)=>{
+  const sum=combo.parts.reduce((a,n)=>{const x=items[n];a.k+=x.k;a.p+=x.p;a.f+=x.f;a.c+=x.c;a.price+=x.price;return a;},{k:0,p:0,f:0,c:0,price:0});
+  return {id:1101+i,canteen:'楠苑',floor:'一楼',name:combo.parts.join(' + '),parts:combo.parts,kcal:sum.k,p:sum.p,f:sum.f,c:sum.c,price:'单品合计约 ¥'+sum.price,feature:combo.feature,advice:combo.advice,kind:'storeItemCombo'};
+ });
 }
 function basePool(){
  const local=menuData.filter(d=>d.canteen===recCanteen&&(recFloor==='全部楼层'||d.floor===recFloor)&&!['pending','store','dynamic'].includes(d.kind)&&fitsMeal(d,selectedMeal));
@@ -240,7 +246,7 @@ function generatePlans(){
  let plan={title:'本次推荐',desc:'按「'+selectedMeal+'」筛选，只推荐一个实际购买选项：一个窗口、一份完整单品，不跨楼层、不拼半份。',items:[chosen],style:'single'};
  planStore=[plan];
  let d=chosen,totals=planTotals(plan);
- $('plans').innerHTML=`<div class="recommend-grid" style="grid-template-columns:minmax(0,1fr)"><div class="plan-card best"><h3>今天可以选这一份</h3><div class="plan-sub">${plan.desc}</div><div class="plan-dish">${d.kind==='storeItem'?shopThumb(d.name):(dishImage(d)?`<img src="${dishImage(d)}" alt="${esc(d.name)}实物参考图" loading="lazy">`:`<div class="plan-photo-placeholder">暂无图片</div>`)}<div><b>${esc(d.name)}</b><small>${d.canteen} · ${d.floor} · ${d.price||'一份正常售卖份量'}</small></div></div><div class="plan-total">${totals.kcal} <span style="font-size:12px;font-weight:400">kcal（估算）</span></div><div class="macro-row"><div class="macro"><b>${totals.p}g</b><small>蛋白质</small></div><div class="macro"><b>${totals.f}g</b><small>脂肪</small></div><div class="macro"><b>${totals.c}g</b><small>碳水</small></div></div><p class="small">${esc(d.feature)}</p><p class="small"><b>选择提示：</b>${esc(d.advice)}</p><button class="secondary" style="width:100%;margin-top:8px" onclick="showAnalysis(0)">查看这份的营养分析</button></div></div><div class="action-row"><button onclick="generatePlans()">↻ 换一个单品</button><span class="tiny">推荐范围：${selectedMeal} · ${recCanteen} · ${recFloor}。餐次筛选依据菜品类型，实际供餐时段以窗口为准。每次只推荐一份完整单品。</span></div>`;
+ $('plans').innerHTML=`<div class="recommend-grid" style="grid-template-columns:minmax(0,1fr)"><div class="plan-card best"><h3>今天可以选这一份</h3><div class="plan-sub">${plan.desc}</div><div class="plan-dish">${d.kind==='storeItemCombo'?d.parts.map(n=>shopThumb(n)).join('<span class="combo-plus">＋</span>'):d.kind==='storeItem'?shopThumb(d.name):(dishImage(d)?`<img src="${dishImage(d)}" alt="${esc(d.name)}实物参考图" loading="lazy">`:`<div class="plan-photo-placeholder">暂无图片</div>`)}<div><b>${esc(d.name)}</b><small>${d.canteen} · ${d.floor} · ${d.price||'一份正常售卖份量'}</small></div></div><div class="plan-total">${totals.kcal} <span style="font-size:12px;font-weight:400">kcal（估算）</span></div><div class="macro-row"><div class="macro"><b>${totals.p}g</b><small>蛋白质</small></div><div class="macro"><b>${totals.f}g</b><small>脂肪</small></div><div class="macro"><b>${totals.c}g</b><small>碳水</small></div></div><p class="small">${esc(d.feature)}</p><p class="small"><b>选择提示：</b>${esc(d.advice)}</p><button class="secondary" style="width:100%;margin-top:8px" onclick="showAnalysis(0)">查看这份的营养分析</button></div></div><div class="action-row"><button onclick="generatePlans()">↻ 换一个单品</button><span class="tiny">推荐范围：${selectedMeal} · ${recCanteen} · ${recFloor}。餐次筛选依据菜品类型，实际供餐时段以窗口为准。每次只推荐一份完整单品。</span></div>`;
  showAnalysis(0);
 }
 function planTotals(plan){let scale=1;return {kcal:Math.round(plan.items.reduce((s,d)=>s+d.kcal*scale,0)),p:Math.round(plan.items.reduce((s,d)=>s+d.p*scale,0)),f:Math.round(plan.items.reduce((s,d)=>s+d.f*scale,0)),c:Math.round(plan.items.reduce((s,d)=>s+d.c*scale,0))};}
