@@ -469,7 +469,7 @@ function generatePlans(){
   (plan.relaxed?'<p class="small" style="color:#b06a12"><b>提示：</b>'+esc(plan.relaxed)+'</p>':'')+
   '<p class="small"><b>选择提示：</b>'+esc(plan.advice)+'</p>'+
   (plan.items.length<2?'<p class="small"><b>说明：</b>该楼层当前只有单一窗口的主餐，暂无可搭配的配餐或饮品，因此不强行凑餐；建议按需自行再加一份蔬菜或饮品。</p>':'')+
-  '<button class="secondary" style="width:100%;margin-top:8px" onclick="showAnalysis(0)">查看整套营养分析</button>'+
+  '<button style="width:100%;margin-top:10px" onclick="eatPlan(0)">就吃这个！</button>'+'<button class="secondary" style="width:100%;margin-top:8px" onclick="showAnalysis(0)">查看整套营养分析</button>'+
   '</div></div><div class="action-row"><button onclick="generatePlans()">↻ 换一换</button><span class="tiny">推荐范围：'+esc(selectedMeal)+' · '+esc(recCanteen)+' · '+esc(recFloor)+'。同一楼层内搭配，不跨食堂；营养与价格均为参考估算。'+shopNote+'</span></div>';
  showAnalysis(0);
 }
@@ -496,6 +496,16 @@ function nutriDonut(p,f,c,kcal){
  const e=p*4+f*9+c*4;
  const pp=e?Math.round(p*4/e*100):0, fp=e?Math.round(f*9/e*100):0, cp=e?100-pp-fp:0;
  return `<div class="donut-wrap"><div class="donut" style="background:conic-gradient(#2e9e7a 0 ${pp}%,#f0a63c ${pp}% ${pp+fp}%,#6f8fd8 ${pp+fp}% 100%)"><div class="donut-hole"><b>${kcal}</b><small>kcal</small></div></div><div class="donut-legend"><div><i style="background:#2e9e7a"></i>蛋白质 <b>${p}g</b> · ${pp}%</div><div><i style="background:#f0a63c"></i>脂肪 <b>${f}g</b> · ${fp}%</div><div><i style="background:#6f8fd8"></i>碳水 <b>${c}g</b> · ${cp}%</div></div></div>`;
+}
+function eatPlan(i){
+ const p=planStore[i];if(!p)return;
+ const meal=selectedMeal;
+ p.items.forEach(function(x){
+  basket.push({name:x.name,canteen:p.canteen,floor:x.floor||p.floor,shop:x.shop||p.shop||'',meal:meal,kcal:x.kcal,p:x.p,f:x.f,c:x.c,price:x.price||0});
+ });
+ saveBasket();renderBasket();
+ toast('已把整套加入'+meal+' · 共'+p.items.length+'件');
+ $('myMeal').scrollIntoView({behavior:'smooth'});
 }
 function addToBasket(id){const d=menuData.find(x=>x.id===id);if(!d||d.kind==='store'||d.kind==='pending')return;const n=itemNutrition(d.name);basket.push({name:d.name,canteen:d.canteen,floor:d.floor,shop:'',meal:basketMeal,kcal:d.kcal,p:d.p,f:d.f,c:d.c,price:n.price||0});closeDishModal();saveBasket();renderBasket();toast('已加入'+basketMeal+' · '+d.name);$('myMeal').scrollIntoView({behavior:'smooth'});}
 function removeBasketItem(i){basket.splice(i,1);saveBasket();renderBasket();}
