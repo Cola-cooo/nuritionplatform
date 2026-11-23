@@ -68,7 +68,7 @@ main{padding-top:20px}
 <div class="notice">营养数据为按常见食堂单份菜品进行的参考估算，并非食堂实际检测值。具体数值会受份量、配方、用油和烹饪方式影响；本平台仅提供日常饮食参考，不用于疾病诊断或治疗。</div>
 <div class="dash-grid"><div class="card goal-card"><div class="small">云大校园饮食助手</div><h3>从真实菜单出发，找到适合自己的搭配</h3><div class="goal-row"><div class="ring" id="goalRing" data-label="45" style="--goal-progress:100%"></div><div><b>46 个菜单条目已建立</b><div class="small">3 个食堂 · 10 个楼层/区域 · 参考营养数据</div></div></div></div><div class="card quick-card"><div class="food-icon">🥗</div><div><b>今日搭配小提示</b><div class="small">优先考虑主食、蛋白质和蔬菜的组合</div><button style="margin-top:9px;padding:7px 12px;font-size:12px" onclick="document.getElementById('recommend').scrollIntoView({behavior:'smooth'})">生成我的搭配</button></div></div></div>
 <section id="canteens" class="section"><div class="panel-title"><div><h2>食堂菜品查询</h2><p class="lead">选择食堂和楼层，查看对应菜单及每份参考营养信息。</p></div><span class="estimate">全部菜品营养数据均为参考估算</span></div><div class="choice-grid" id="canteenChoices"></div><label class="field-label">选择楼层 / 区域</label><div class="floor-row" id="floorChoices"></div><div class="searchbar" style="margin-top:14px"><input id="dishSearch" placeholder="搜索菜品名称，例如：瓦香鸡、牛肉面"><button onclick="renderDishList()">搜索</button></div><div class="small" id="dishCount" style="margin-top:10px"></div><div class="dish-grid" id="dishList"></div><div class="dish-photo-note">图片为对应菜品类型的真实食物参考照片，非云大食堂实拍；部分相近菜品会共用同类照片。</div></section>
-<section id="recommend" class="section"><h2>智能饮食搭配</h2><p class="lead">只从你选择的食堂和楼层菜单中推荐，不跨食堂、不跨楼层。</p><div class="card"><div class="field-label">① 想去哪个食堂？</div><div class="floor-row" id="recCanteens"></div><div class="field-label">② 选择楼层</div><div class="floor-row" id="recFloors"></div><div class="field-label">③ 当前状态（可多选）</div><div class="tag-row" id="stateChoices"></div><div class="field-label">④ 饮食目标（可多选）</div><div class="tag-row" id="goalChoices"></div><div class="action-row"><button onclick="generatePlans()">生成三套搭配</button><button class="secondary" onclick="resetPrefs()">恢复均衡饮食</button></div><p class="tiny">不选择状态或目标时，默认按均衡饮食推荐。若当前楼层菜品不足，系统会如实提示，不会借用其他楼层菜品。</p></div><div id="plans" class="result"><div class="empty">选择食堂后，点击「生成三套搭配」。</div></div></section>
+<section id="recommend" class="section"><h2>智能饮食搭配</h2><p class="lead">先选早餐、午餐或晚餐，再从指定食堂和楼层筛选单品；不跨食堂、不跨楼层。</p><div class="card"><div class="field-label">① 想去哪个食堂？</div><div class="floor-row" id="recCanteens"></div><div class="field-label">② 选择楼层</div><div class="floor-row" id="recFloors"></div><div class="field-label">③ 选择餐次</div><div class="floor-row" id="mealChoices"></div><div class="field-label">④ 当前状态（可多选）</div><div class="tag-row" id="stateChoices"></div><div class="field-label">⑤ 饮食目标（可多选）</div><div class="tag-row" id="goalChoices"></div><div class="action-row"><button onclick="generatePlans()">生成推荐</button><button class="secondary" onclick="resetPrefs()">恢复均衡饮食</button></div><p class="tiny">不选择状态或目标时，默认按均衡饮食推荐。若当前楼层菜品不足，系统会如实提示，不会借用其他楼层菜品。</p></div><div id="plans" class="result"><div class="empty">选择食堂后，点击「生成三套搭配」。</div></div></section>
 <section id="nutrition" class="section"><h2>本餐营养分析</h2><p class="lead">选择上方任意推荐方案，即可查看总热量、三大营养素及下一餐建议。</p><div id="nutritionAnalysis" class="empty">尚未选择推荐方案。</div></section>
 <section id="about" class="section"><h2>数据与使用说明</h2><div class="articles"><article class="card article"><h3>估算口径</h3><p>按常见单份食堂餐食估算；每份热量和三大营养素均标记为参考估算，不代表实际售卖份量的检测结果。</p></article><article class="card article"><h3>动态菜品</h3><p>自选菜、麻辣香锅、轻食及菜单点菜等菜品可进入份量估算器，按食材和份量调整营养值。</p></article><article class="card article"><h3>合理使用</h3><p>推荐结果用于日常饮食参考。过敏、疾病或特殊营养需求，请以专业人员建议为准。</p></article></div></section>
 <div class="footer">云大营养平台｜云南大学校园饮食营养推荐平台</div></main>
@@ -165,11 +165,12 @@ function dishImage(d){
 const canteens=['楸苑','楠苑','梓苑'];
 const states=['非常饿','正常饥饿','不太饿','刚运动结束','今天运动量较少'];
 const goals=['正常饮食','减脂控制热量','增肌补充蛋白质','控制油脂摄入','控制糖分摄入','清淡饮食','运动后补充营养'];
+let selectedMeal='午餐';
 let selectedCanteen='楸苑', selectedFloor='全部楼层', recCanteen='楸苑', recFloor='全部楼层', selectedStates=[], selectedGoals=[], selectedPlan=null, rotation=0, planStore=[];
 const floorMap={'楸苑':['一楼','二楼','三楼'],'楠苑':['周边商家','一楼','二楼','三楼'],'梓苑':['一楼','二楼','三楼']};
 const $=id=>document.getElementById(id);
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-function init(){renderCanteens();renderFloors();renderDishList();renderRecCanteens();renderRecFloors();renderTags();}
+function init(){renderCanteens();renderFloors();renderDishList();renderRecCanteens();renderRecFloors();renderMealChoices();renderTags();}
 function renderCanteens(){$('canteenChoices').innerHTML=canteens.map(c=>`<button class="choice ${c===selectedCanteen?'selected':''}" onclick="selectCanteen('${c}')"><b>${c}食堂</b><small>${floorMap[c].join(' · ')}</small></button>`).join('');}
 function selectCanteen(c){selectedCanteen=c;selectedFloor='全部楼层';renderCanteens();renderFloors();renderDishList();}
 function renderFloors(){let opts=['全部楼层',...floorMap[selectedCanteen]];$('floorChoices').innerHTML=opts.map(f=>`<button class="tag-btn ${f===selectedFloor?'active':''}" onclick="selectFloor('${f}')">${f}</button>`).join('');}
@@ -182,17 +183,28 @@ function setRecFloor(f){recFloor=f;renderRecFloors();$('plans').innerHTML='<div 
 function renderTags(){$('stateChoices').innerHTML=states.map(s=>`<button class="tag-btn ${selectedStates.includes(s)?'active':''}" onclick="toggleChoice('state','${s}')">${s}</button>`).join('');$('goalChoices').innerHTML=goals.map(s=>`<button class="tag-btn ${selectedGoals.includes(s)?'active':''}" onclick="toggleChoice('goal','${s}')">${s}</button>`).join('');}
 function toggleChoice(type,s){let a=type==='state'?selectedStates:selectedGoals;let i=a.indexOf(s);if(i>=0)a.splice(i,1);else a.push(s);renderTags();}
 function resetPrefs(){selectedStates=[];selectedGoals=[];renderTags();generatePlans();}
-function basePool(){return menuData.filter(d=>d.canteen===recCanteen&&(recFloor==='全部楼层'||d.floor===recFloor)&&!['pending','store','dynamic'].includes(d.kind));}
+const mealOptions=['早餐','午餐','晚餐'];
+function renderMealChoices(){$('mealChoices').innerHTML=mealOptions.map(m=>`<button class="tag-btn ${m===selectedMeal?'active':''}" onclick="selectMeal('${m}')">${m}</button>`).join('');}
+function selectMeal(m){selectedMeal=m;renderMealChoices();generatePlans();}
+function fitsMeal(d,meal){
+ const n=d.name||'';
+ const breakfast=/(馄饨|肠粉|米线|面|粥|豆浆|燕麦|手抓饼|烧麦|包子|饺子|鸡蛋|早餐|米布)/.test(n);
+ const snack=/(鸭脖|糖水|薯条|鸡米花|鸡块|炸鸡|冰淇淋|可乐|雪碧|饮料|奶茶|果汁|小食)/.test(n);
+ if(meal==='早餐') return breakfast;
+ if(meal==='午餐') return !snack;
+ return !snack && !/(燕麦|手抓饼|烧麦|早餐|米布)/.test(n);
+}
+function basePool(){return menuData.filter(d=>d.canteen===recCanteen&&(recFloor==='全部楼层'||d.floor===recFloor)&&!['pending','store','dynamic'].includes(d.kind)&&fitsMeal(d,selectedMeal));}
 function scoreDish(d,style){let score=Math.random()*1.4;if(style==='balanced'){score+=d.p*.16 - Math.abs(d.kcal-600)*.003 - d.f*.025;}if(style==='protein'){score+=d.p*.42-d.f*.045;}if(style==='light'){score+=-d.kcal*.012-d.f*.09+d.p*.13;}let goalsNow=selectedGoals;if(goalsNow.includes('减脂控制热量'))score+=-d.kcal*.003+d.p*.05;if(goalsNow.includes('增肌补充蛋白质')||goalsNow.includes('运动后补充营养'))score+=d.p*.16;if(goalsNow.includes('控制油脂摄入'))score-=d.f*.12;if(goalsNow.includes('清淡饮食'))score-=d.f*.07;if(goalsNow.includes('控制糖分摄入'))score-=d.c*.025;if(selectedStates.includes('刚运动结束'))score+=d.p*.07+d.c*.015;if(selectedStates.includes('今天运动量较少'))score-=d.kcal*.001;return score;}
 function generatePlans(){
  let pool=basePool();
- if(!pool.length){$('plans').innerHTML='<div class="empty">当前范围内还没有核实完成的具体单品菜单。店铺入口和自选类项目暂不参与自动推荐，避免把店名当菜名。</div>';return;}
+ if(!pool.length){$('plans').innerHTML='<div class="empty">当前范围内没有匹配「'+selectedMeal+'」的已核实单品。可以换一个楼层或餐次；不会拿其他时段或店铺入口凑数。</div>';return;}
  let ranked=[...pool].sort((a,b)=>scoreDish(b,'balanced')-scoreDish(a,'balanced'));
  let chosen=ranked[rotation%ranked.length];rotation++;
- let plan={title:'本次推荐',desc:'只推荐一个实际购买选项：一个窗口、一份完整单品，不跨楼层、不拼半份。',items:[chosen],style:'single'};
+ let plan={title:'本次推荐',desc:'按「'+selectedMeal+'」筛选，只推荐一个实际购买选项：一个窗口、一份完整单品，不跨楼层、不拼半份。',items:[chosen],style:'single'};
  planStore=[plan];
  let d=chosen,totals=planTotals(plan);
- $('plans').innerHTML=`<div class="recommend-grid" style="grid-template-columns:minmax(0,1fr)"><div class="plan-card best"><h3>今天可以选这一份</h3><div class="plan-sub">${plan.desc}</div><div class="plan-dish">${dishImage(d)?`<img src="${dishImage(d)}" alt="${esc(d.name)}实物参考图" loading="lazy">`:`<div class="plan-photo-placeholder">暂无核实图片</div>`}<div><b>${esc(d.name)}</b><small>${d.canteen} · ${d.floor} · ${d.source} · 一份正常售卖份量</small></div></div><div class="plan-total">${totals.kcal} <span style="font-size:12px;font-weight:400">kcal（估算）</span></div><div class="macro-row"><div class="macro"><b>${totals.p}g</b><small>蛋白质</small></div><div class="macro"><b>${totals.f}g</b><small>脂肪</small></div><div class="macro"><b>${totals.c}g</b><small>碳水</small></div></div><p class="small">${esc(d.feature)}</p><p class="small"><b>选择提示：</b>${esc(d.advice)}</p><button class="secondary" style="width:100%;margin-top:8px" onclick="showAnalysis(0)">查看这份的营养分析</button></div></div><div class="action-row"><button onclick="generatePlans()">↻ 换一个单品</button><span class="tiny">推荐范围：${recCanteen} · ${recFloor}。每次只给出一个窗口的一份单品；不会组合其他楼层或店铺。</span></div>`;
+ $('plans').innerHTML=`<div class="recommend-grid" style="grid-template-columns:minmax(0,1fr)"><div class="plan-card best"><h3>今天可以选这一份</h3><div class="plan-sub">${plan.desc}</div><div class="plan-dish">${dishImage(d)?`<img src="${dishImage(d)}" alt="${esc(d.name)}实物参考图" loading="lazy">`:`<div class="plan-photo-placeholder">暂无核实图片</div>`}<div><b>${esc(d.name)}</b><small>${d.canteen} · ${d.floor} · ${d.source} · 一份正常售卖份量</small></div></div><div class="plan-total">${totals.kcal} <span style="font-size:12px;font-weight:400">kcal（估算）</span></div><div class="macro-row"><div class="macro"><b>${totals.p}g</b><small>蛋白质</small></div><div class="macro"><b>${totals.f}g</b><small>脂肪</small></div><div class="macro"><b>${totals.c}g</b><small>碳水</small></div></div><p class="small">${esc(d.feature)}</p><p class="small"><b>选择提示：</b>${esc(d.advice)}</p><button class="secondary" style="width:100%;margin-top:8px" onclick="showAnalysis(0)">查看这份的营养分析</button></div></div><div class="action-row"><button onclick="generatePlans()">↻ 换一个单品</button><span class="tiny">推荐范围：${selectedMeal} · ${recCanteen} · ${recFloor}。餐次筛选依据菜品类型，实际供餐时段以窗口为准。每次只推荐一份完整单品。</span></div>`;
  showAnalysis(0);
 }
 function planTotals(plan){let scale=1;return {kcal:Math.round(plan.items.reduce((s,d)=>s+d.kcal*scale,0)),p:Math.round(plan.items.reduce((s,d)=>s+d.p*scale,0)),f:Math.round(plan.items.reduce((s,d)=>s+d.f*scale,0)),c:Math.round(plan.items.reduce((s,d)=>s+d.c*scale,0))};}
